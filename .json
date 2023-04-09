@@ -1,0 +1,20 @@
+[
+    {
+        "idSender": "id",
+        "idReceiver": "id",
+        "idMessage": "id",
+        "message": "message",
+        "time": "time"
+    },
+    {
+        "type": "control",
+        "id": "id",
+        "ip": "ip"
+    },
+    {
+        "type": "key",
+        "id": "id",
+        "ip": "ip",
+        "key": "public.key as bytes"
+    }
+]
