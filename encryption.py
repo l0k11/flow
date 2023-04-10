@@ -19,7 +19,7 @@ def generate_keys(directory):
     serialized_private_key = private_key.private_bytes(
         encoding = Encoding.PEM,
         format = PrivateFormat.PKCS8,
-        encryption_algorithm = BestAvailableEncryption(bytes(uuid4()))
+        encryption_algorithm = BestAvailableEncryption(uuid4().bytes)
     )
     with open(f"{directory}public.key", "w") as file: file.write(serialized_public_key.decode())
     with open(f"{directory}private.key", "w") as file: file.write(serialized_private_key.decode())

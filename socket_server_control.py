@@ -7,13 +7,12 @@ class ControlServer(threading.Thread):
 
     def run(self):
         mi_socket = socket.socket()
-        mi_socket.bind((self.ip, 6003))
-        mi_socket.listen(5)
+        mi_socket.bind((self.ip, 6004))
+        mi_socket.listen(999)
 
         while True:
             try:
                 conexion, addr = mi_socket.accept() # Esta se ejecuta hasta que conecta
-                
                 packet = conexion.recv(4096).decode()
                 packet = json.loads(packet)
 
@@ -52,14 +51,13 @@ class ControlServer(threading.Thread):
                                 
                             else:
                                 con.execute("UPDATE users SET user_ip=? WHERE user_id=?", (str(packet["ip"]), str(packet["id"])))
-                                
-                            
                             
                             RPacket = {
                                 "type": "control",
                                 "id": "server",
                                 "status": "ok"
                             }
+
                             RPacket = json.dumps(RPacket)
                         except:
                             con.close()
@@ -67,7 +65,7 @@ class ControlServer(threading.Thread):
                 
                 print(RPacket)
                 send = socket.socket()
-                send.connect((packet["ip"], 6001))
+                send.connect((packet["ip"], 6002))
                 send.send(str.encode(RPacket))
                 conexion.close()
             except:
@@ -79,6 +77,3 @@ class ControlServer(threading.Thread):
         private_ip = s.getsockname()[0]
         s.close()
         return private_ip
-
-servidor = ControlServer()
-servidor.start()

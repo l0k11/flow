@@ -23,20 +23,21 @@ def db_prepare(file):
             raise Exception(f"Cannot find to {file}")
 
 def setup():
-    root_win = f"{pathlib.Path.home()}\\.flow"
+    root_win = f"{pathlib.Path.home()}\\.flow\\"
     # root_win = "C:\\Users\\Luis\\OneDrive\\Documentos\\ASIR\\2º\\TFG\\flow"
-    root_other = f"{pathlib.Path.home()}/.flow"
+    root_other = f"{pathlib.Path.home()}/.flow/"
 
-    passwd_win = f"{root_win}\\passwd"
-    passwd_other = f"{root_other}/passwd"
+    passwd_win = f"{root_win}passwd"
+    passwd_other = f"{root_other}passwd"
 
-    db_win = f"{root_win}\\.db"
-    db_other = f"{root_other}/.db"
+    db_win = f"{root_win}.db"
+    db_other = f"{root_other}.db"
 
     if platform.system() == "Windows": 
         os.system("cls")
         print("Welcome to flow, your local chat app!")
         print("")
+        dir = root_win
         
         if os.path.exists(root_win) and os.path.exists(passwd_win) and os.path.exists(db_win):
             passwd = open(passwd_win).readlines()[1]
@@ -82,9 +83,16 @@ def setup():
             os.system("clear")
             print("Welcome to flow, your local chat app!")
             print("")
+            dir = root_other
             
             if os.path.exists(root_other) and os.path.exists(passwd_other) and os.path.exists(db_other):
-                password = input("Type the password")
+                passwd = open(passwd_other).readlines()[1]
+                passwd_in = getpass.getpass("Type your password: ")
+
+                while passwd != hashlib.md5(passwd_in.encode()).hexdigest():
+                    print("")
+                    print("Incorrect password")
+                    passwd_in = getpass.getpass("Type your password: ")
             
             else:
                 if not os.path.exists(root_other):
@@ -122,12 +130,19 @@ def setup():
         ip = input("Type the IP address: ")
         try:
             con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            con.connect((ip, 6002))
-            con.close()
             con.connect((ip, 6003))
             con.close()
+
+            con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            con.connect((ip, 6004))
+            con.close()
             print(f"Successfully connected to {ip}. Have a nice chatting!")
+            
+            return {
+                "ip": ip,
+                "dir": dir
+            }
         except:
             print(f"Server in {ip} unavailable")
 
-# setup()
+#setup()

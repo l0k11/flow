@@ -1,5 +1,4 @@
-import socket
-import json
+import socket, json
 
 def get_private_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -15,7 +14,7 @@ pack = {
     "ip": get_private_ip()
 }
 
-client.connect(("192.168.8.102", 6003))
+client.connect(("192.168.8.102", 6004))
 client.send(str.encode(json.dumps(pack)))
 
 client.close()
