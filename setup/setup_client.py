@@ -61,6 +61,7 @@ def setup():
                         print("Passwords do not match")
                         password1 = getpass.getpass("Password: ")
                         password2 = getpass.getpass("Repeat the password: ")
+                    os.chmod(passwd_win, 0o444)
 
                     password = hashlib.md5(password1.encode()).hexdigest()
 
