@@ -1,3 +1,3 @@
-import uuid
+from time import time
 
-print(type(uuid.uuid4().bytes))
+print(time() * 1000)

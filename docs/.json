@@ -8,13 +8,11 @@
     },
     {
         "type": "control",
-        "id": "id",
-        "ip": "ip"
+        "id": "id"
     },
     {
         "type": "key",
         "id": "id",
-        "ip": "ip",
         "key": "public.key as bytes"
     }
 ]

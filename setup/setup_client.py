@@ -2,6 +2,7 @@ import pathlib, platform, os, shutil
 import getpass, hashlib
 import sqlite3, uuid
 import socket
+import utilities.encryption as encryption
 
 def db_prepare(file):
     pathlib.Path(file).touch()
@@ -22,9 +23,14 @@ def db_prepare(file):
             con.close()
             raise Exception(f"Cannot find to {file}")
 
+def check_keys(root):
+    if os.path.exists(f"{root}public.key") and os.path.exists(f"{root}private.key"):
+        return True
+    else:
+        return False
+
 def setup():
     root_win = f"{pathlib.Path.home()}\\.flow\\"
-    # root_win = "C:\\Users\\Luis\\OneDrive\\Documentos\\ASIR\\2º\\TFG\\flow"
     root_other = f"{pathlib.Path.home()}/.flow/"
 
     passwd_win = f"{root_win}passwd"
@@ -37,9 +43,9 @@ def setup():
         os.system("cls")
         print("Welcome to flow, your local chat app!")
         print("")
-        dir = root_win
+        root = root_win
         
-        if os.path.exists(root_win) and os.path.exists(passwd_win) and os.path.exists(db_win):
+        if os.path.exists(root_win) and os.path.exists(passwd_win) and os.path.exists(db_win) and check_keys(root_win):
             passwd = open(passwd_win).readlines()[1]
             passwd_in = getpass.getpass("Type your password: ")
 
@@ -73,6 +79,9 @@ def setup():
                     pathlib.Path(db_win).touch()
                     db_prepare(db_win)
 
+                if not check_keys(root_win):
+                    encryption.generate_keys(root_win)
+
                 print("flow successfully installed!")
             except:
                 shutil.rmtree(root_win)
@@ -84,9 +93,9 @@ def setup():
             os.system("clear")
             print("Welcome to flow, your local chat app!")
             print("")
-            dir = root_other
+            root = root_other
             
-            if os.path.exists(root_other) and os.path.exists(passwd_other) and os.path.exists(db_other):
+            if os.path.exists(root_other) and os.path.exists(passwd_other) and os.path.exists(db_other) and check_keys(root_win):
                 passwd = open(passwd_other).readlines()[1]
                 passwd_in = getpass.getpass("Type your password: ")
 
@@ -111,13 +120,16 @@ def setup():
                     password = hashlib.md5(password1.encode()).hexdigest()
 
                     with open(passwd_other, "w") as file:
-                        file.write("# DO NOT MODIFY THIS FILE\n")
+                        file.write("¡¡DO NOT MODIFY THIS FILE!!\n")
                         file.write(password)
                     os.chmod(passwd_other, 0o444)
 
                 if not os.path.exists(db_other):
                     pathlib.Path(db_other).touch()
                     db_prepare(db_other)
+
+                if not check_keys(root_other):
+                    encryption.generate_keys(root_other)
 
                 print("flow successfully installed!")
         except:
@@ -131,17 +143,17 @@ def setup():
         ip = input("Type the IP address: ")
         try:
             con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            con.connect((ip, 6003))
+            con.connect((ip, 6002))
             con.close()
 
             con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            con.connect((ip, 6004))
+            con.connect((ip, 6003))
             con.close()
             print(f"Successfully connected to {ip}. Have a nice chatting!")
             
             return {
                 "ip": ip,
-                "dir": dir
+                "root": root
             }
         except:
             print(f"Server in {ip} unavailable")
