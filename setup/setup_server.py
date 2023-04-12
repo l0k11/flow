@@ -2,34 +2,7 @@ import pathlib, platform, os, shutil
 import getpass, hashlib
 import sqlite3, utilities.functions as functions, utilities.encryption as encryption
 
-def db_prepare(file):
-    pathlib.Path(file).touch()
-    with sqlite3.connect(file) as con:
-        try:
-            con.execute("""CREATE TABLE conversations (
-                conversation_id CHAR(36) PRIMARY KEY,
-                conversation_name VARCHAR(255) 
-            );""")
 
-            con.execute("""CREATE TABLE users (
-                user_id CHAR(36) PRIMARY KEY,
-                user_ip VARCHAR(255),
-                status VARCHAR(255)
-            );""")
-            
-            con.execute("""CREATE TABLE messages (
-                message_id CHAR(36) PRIMARY KEY,
-                conversation_id CHAR(36),
-                user_id CHAR(36),
-                message_text VARCHAR(1000),
-                message_timestamp VARCHAR(255),
-                FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id),
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
-            );""")
-
-        except:
-            con.close()
-            raise Exception(f"Cannot find {file}")
 
 def check_keys(root):
     if os.path.exists(f"{root}public.key") and os.path.exists(f"{root}private.key"):

@@ -1,3 +1,3 @@
-from time import time
+import datetime
 
-print(time() * 1000)
+print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

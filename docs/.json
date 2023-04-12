@@ -14,5 +14,10 @@
         "type": "key",
         "id": "id",
         "key": "public.key as bytes"
+    },
+    {
+        "type": "checkID",
+        "idToCheck": "id",
+        "table": "users / messages / conversation"
     }
 ]
