@@ -1,7 +1,6 @@
-from setup.setup_server import setup
-import threads.server_control as control, threads.server_msg as msg
+import pathlib, threads.server_control as control,\
+    threads.server_msg as msg, functions.setup as setup
 
-setup()
-
+settings = setup.server_setup()
 msg.MSGServer().start()
-control.ControlServer().start()
+control.ControlServer(f"{pathlib.Path.home()}/.flow-server/").start()

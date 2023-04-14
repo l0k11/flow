@@ -1,9 +1,9 @@
-import socket, threading, json, sqlite3, utilities.functions as functions, datetime
+import socket, threading, json, sqlite3, functions.other as other, datetime
 
 class ControlServer(threading.Thread):
     def __init__(self, root):
         threading.Thread.__init__(self)
-        self.ip = functions.get_private_ip()
+        self.ip = other.get_private_ip()
         self.root = root
 
     def run(self):
@@ -13,11 +13,15 @@ class ControlServer(threading.Thread):
 
         while True:
             conexion, addr = mi_socket.accept()
-            try:
-                packet = conexion.recv(4096).decode()
-                packet = json.loads(packet)
-                
-                if packet["type"] == "key":
+            packet = conexion.recv(4096)
+            print("1")
+            print(packet)
+            print("2")
+            packet = json.loads(packet.decode())
+            now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            if packet["type"] == "key":
+                try:
                     with open(f'{self.root}client_keys/{packet["id"]}.key', 'w') as file:
                         file.write(packet["key"])
 
@@ -29,37 +33,56 @@ class ControlServer(threading.Thread):
                         "id": "server",
                         "key": public
                     }
-                    RPacket = json.dumps(RPacket)
-                    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    
                     print(f"{now} {addr[0]}: Key exchange conection correct")
                 
-                elif packet["type"] == "control":
-                    with sqlite3.connect(f"{self.root}.db") as con:
-                        try:
-                            select = con.execute("SELECT * FROM users WHERE user_id=?", (str(packet["id"]),))
-                            result = select.fetchall()
-                            
-                            if len(result) == 0:
-                                con.execute("INSERT INTO users VALUES (?,?, 'online')", (str(packet["id"]), str(packet["ip"])))
-                            else:
-                                con.execute("UPDATE users SET user_ip=?, status='online' WHERE user_id=?", (str(packet["ip"]), str(packet["id"])))
+                except Exception as e:
+                    conexion.close()
+                    raise e
+            
+            elif packet["type"] == "control":
+                with sqlite3.connect(f"{self.root}.db") as con:
+                    try:
+                        select = con.execute("SELECT * FROM users WHERE id=?", (addr[0],))
+                        result = select.fetchall()
+                        
+                        if len(result) == 0:
+                            con.execute("INSERT INTO users VALUES (?,?, 'online')", (str(packet["id"]), addr[0]))
+                        else:
+                            con.execute("UPDATE users SET ip=?, status='online' WHERE id=?", (addr[0], str(packet["id"])))
 
+                        RPacket = {
+                            "type": "control",
+                            "id": "server",
+                            "status": "ok"
+                        }
+                        print(f"{now} {addr[0]}: Control conection correct")
+                    except Exception as e:
+                        con.close()
+                        conexion.close()
+                        raise e
+            
+            elif packet["type"] == "checkID":
+                with sqlite3.connect(f"{self.root}.db") as con:
+                    try:
+                        select = con.execute(f"SELECT id FROM {packet['table']} WHERE id = ?", (packet["idToCheck"],))
+                        result = select.fetchall()
+                        if len(result) == 0:
                             RPacket = {
-                                "type": "control",
                                 "id": "server",
-                                "status": "ok"
+                                "available": True
                             }
-                            RPacket = json.dumps(RPacket)
-                            print(f"{now} {addr[0]}: Control conection correct")
-                        except:
-                            con.close()
-                            raise Exception(f"Cannot find to {file}")
-                
-                elif packet["type"] == "checkID":
-                    with sqlite3.connect(f"{self.root}.db") as con:
-                        con.execute("SELECT ")
-                
-                conexion.sendall(str.encode(RPacket))
-                conexion.close()
-            except:
-                pass
+                        else:
+                            RPacket = {
+                                "id": "server",
+                                "available": False
+                            }
+
+                    except Exception as e:
+                        con.close()
+                        conexion.close()
+                        raise e
+            
+            RPacket = json.dumps(RPacket)
+            conexion.sendall(str.encode(RPacket))
+            conexion.close()

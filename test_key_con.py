@@ -1,7 +1,7 @@
-import socket, json, utilities.functions as functions
+import socket, json, utilities.other_functs as other_functs
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((functions.get_private_ip(), 6003))
+client.connect((other_functs.get_private_ip(), 6003))
 with open("C:/Users/Luis/.flow/public.key", encoding = "utf-8") as file:
     key = file.read()
 

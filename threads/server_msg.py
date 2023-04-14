@@ -1,9 +1,9 @@
-import socket, threading, json, utilities.functions as functions
+import socket, threading, json, functions.other as other
 
 class MSGServer(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        self.ip = functions.get_private_ip()
+        self.ip = other.get_private_ip()
 
     def run(self):
         server_msg_socket = socket.socket()
