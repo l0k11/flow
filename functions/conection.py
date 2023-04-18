@@ -1,4 +1,5 @@
-import uuid, socket, json, time, sqlite3
+import uuid, socket, json, time, sqlite3,\
+    functions.encryption as encryption
 
 def generate_id(ip, type):
     if type == "message":
@@ -10,8 +11,6 @@ def generate_id(ip, type):
     if type == "user":
         while True:
             id = f"u{uuid.uuid4()}"
-            print(f"generate_id id {id}")
-            print(f"generate_id ip {ip}")
             if check_id(ip, id):
                 return id
             
@@ -39,15 +38,13 @@ def check_id(ip, id: str):
         client.connect((ip, 6003))
         client.sendall(bytes(json.dumps(packet), "utf-8"))
         response = json.loads(client.recv(4096).decode())
-        
-    print(response)
 
     return True if response["available"] else False
     
-def client_control_con(ip, db_file):
+def client_control_con(ip, root):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ip, 6003))
-    with sqlite3.connect(db_file) as con:
+    with sqlite3.connect(f"{root}.db") as con:
         select = con.execute("SELECT id FROM contacts WHERE name='SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'")
         id = select.fetchall()[0][0]
     
@@ -62,11 +59,8 @@ def client_control_con(ip, db_file):
     return response
 
 def client_keys_exchange(ip, root):
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((ip, 6003))
-
     with sqlite3.connect(f"{root}.db") as con:
-        select = con.execute("SELECT contact_id FROM contacts WHERE contact_name='SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'")
+        select = con.execute("SELECT id FROM contacts WHERE name='SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'")
         id = select.fetchall()[0][0]
     
     with open(f"{root}public.key", "r", encoding = "utf-8") as file:
@@ -78,23 +72,32 @@ def client_keys_exchange(ip, root):
         "key": key,
     }
 
-    client.sendall(bytes(json.dumps(packet), "utf-8"))
-    response = json.loads(client.recv(4096).decode())
-    client.close()
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((ip, 6003))
+        client.sendall(bytes(json.dumps(packet), "utf-8"))
+        response = json.loads(client.recv(4096).decode())
     
     with open(f"{root}server.key", "w", encoding = "utf-8") as file:
         file.write(response["key"])
     
     return response
 
-def send_message(*, idSender, idReceiver, content):
+def send_message(*, ip, idSender, idReceiver, content, server_key_file):
     packet = {
         "idSender": idSender,
         "idReceiver": idReceiver,
-        "idMessage": uuid.uuid4(),
+        "idMessage": generate_id(ip, "message"),
         "content": content,
         "time": int(round(time.time() * 1000))
     }
 
-
-
+    packet = json.dumps(packet).encode()
+    packet = encryption.encrypt_message(packet, server_key_file)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((ip, 6002))
+        client.sendall(b'\n\n\n'.join(packet))
+        response = json.loads(client.recv(4096).decode())
+    
+    print(response)
+    if not response["status"]: return 1
+    return 0

@@ -1,6 +1,8 @@
-test = 0
+import schedule
+import time
 
-if test:
-    print("hola")
-else:
-    print("not hola")
+schedule.every(5).seconds.do(print, "hola")
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)

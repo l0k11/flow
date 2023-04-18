@@ -13,11 +13,8 @@ class ControlServer(threading.Thread):
 
         while True:
             conexion, addr = mi_socket.accept()
-            packet = conexion.recv(4096)
-            print("1")
-            print(packet)
-            print("2")
-            packet = json.loads(packet.decode())
+            packet = conexion.recv(4096).decode()
+            packet = json.loads(packet)
             now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
             if packet["type"] == "key":
@@ -43,7 +40,8 @@ class ControlServer(threading.Thread):
             elif packet["type"] == "control":
                 with sqlite3.connect(f"{self.root}.db") as con:
                     try:
-                        select = con.execute("SELECT * FROM users WHERE id=?", (addr[0],))
+
+                        select = con.execute("SELECT id FROM users WHERE id=?", (packet["id"],))
                         result = select.fetchall()
                         
                         if len(result) == 0:
@@ -82,7 +80,7 @@ class ControlServer(threading.Thread):
                         con.close()
                         conexion.close()
                         raise e
-            
+
             RPacket = json.dumps(RPacket)
             conexion.sendall(str.encode(RPacket))
             conexion.close()
