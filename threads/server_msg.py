@@ -1,5 +1,7 @@
-import socket, threading, json, functions.other as other,\
-    functions.encryption as encryption
+import socket, threading, json, datetime,\
+    functions.other as other,\
+    functions.encryption as encryption,\
+    functions.conection as con
 
 class MSGServer(threading.Thread):
     def __init__(self, root):
@@ -18,6 +20,7 @@ class MSGServer(threading.Thread):
             raw = raw.split(b"\n\n\n")
             packet = encryption.decrypt_message(raw[0], f"{self.root}private.key", raw[1])
             packet = json.loads(packet)
+            now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             if packet["idReceiver"] == "server":
                 RPacket = {
@@ -39,17 +42,27 @@ class MSGServer(threading.Thread):
                     (packet["idReceiver"],)
                 )
                 result = select.fetchall()
-
-                sendPacket = json.dumps(packet)
-                sendPacket = encryption.encrypt_message(sendPacket.encode(), f"{self.root}client_keys/{packet['idReceiver']}.key")
                 
                 if len(result):
-                    # TODO: TRY EXCEPT POR SI ESTAS DESCONECTADO
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-                        print("Mandado")
-                        client.connect((result[0][0], 6001))
-                        client.sendall(str.encode())
+                    try:
+                        con.send_message(
+                            ip = result[0][0],
+                            port = 6001,
+                            idMessage = packet["idMessage"],
+                            idSender = packet["idSender"],
+                            idReceiver = packet["idReceiver"],
+                            content = packet["content"],
+                            time = packet["time"],
+                            key_file = f"{self.root}client_keys/{packet['idReceiver']}.key"
+                        )
+                        print(f"{now} {addr[0]} to {result[0][0]}: Message sended")
                     
-            server.close()
+                    except:
+                        other.execute_db_command(
+                            f"{self.root}",
+                            "INSERT INTO waiting VALUES (?,?)",
+                            (packet["idMessage"], packet["idReceiver"])
+                        )
+                        print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
 
-# TODO: CONEXION DE CONTROL PARA LOS MENSAJES MANDADOS MIENTRAS ESTABAS DESCONECTADO.
+            server.close()

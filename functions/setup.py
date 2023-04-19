@@ -14,8 +14,7 @@ def server_db_prepare(file):
 
             con.execute("""CREATE TABLE users (
                 id CHAR(37) PRIMARY KEY UNIQUE,
-                ip VARCHAR(255),
-                status VARCHAR(255)
+                ip VARCHAR(255)
             );""")
             
             con.execute("""CREATE TABLE messages (

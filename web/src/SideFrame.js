@@ -73,7 +73,7 @@ class SideFrame extends React.Component{
                             {accountSVG}
                             {contactsSVG}
                             {addSVG}
-                            {/* PONER MODO OSCURO / CLARO */}
+                            {/* TODO: PONER MODO OSCURO / CLARO */}
                         </div>
                         <div id="search">
                             <input type="text" id="search-bar" placeholder="Search"/>
@@ -84,8 +84,8 @@ class SideFrame extends React.Component{
                         </div>
                     </div>
                     <div id="chats">
-                        <ChatSelect name="Someone" lastMsg="hi" id="1e2f3m" />
-                        {/* <ChatSelect name="Luis" lastMsg="hola" id="1e2f3m" /> */}
+                        <ChatSelect name="Isaac" lastMsg="hi" id="321" func_chid={this.props.func_chid}/>
+                        <ChatSelect name="Luis" lastMsg="hola" id="123" func_chid={this.props.func_chid}/>
                     </div>
                 </div>
             </div>

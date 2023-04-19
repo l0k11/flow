@@ -8,10 +8,16 @@ class ChatSelect extends React.Component{
             "lastMsg": this.props.lastMsg,
             "id": this.props.id
         }
+        this.chid = this.handleClick.bind(this)
     }
+
+    handleClick(){
+        this.props.func_chid(this.state.id)
+    }
+
     render(){
         return (
-            <div id={this.state.id} className="chat-select clickable">
+            <div id={this.state.id} className="chat-select clickable" onClick={this.chid}>
                 <h2>{this.state.name}</h2>
                 {this.state.lastMsg && <h3>{this.state.lastMsg}</h3>}
             </div>

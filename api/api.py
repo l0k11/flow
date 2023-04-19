@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO
 
+# <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 app = Flask(__name__)
 socket = SocketIO(app)
 

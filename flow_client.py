@@ -13,6 +13,7 @@ con.client_control_con(settings["server"], settings["root"])
 
 con.send_message(
     ip = settings["server"],
+    port = 6002,
     idSender = settings["id"],
     idReceiver = "u92d448d1-48ff-4053-be86-c726f570dbf0",
     content = "hola",

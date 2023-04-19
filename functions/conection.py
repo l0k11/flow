@@ -82,19 +82,19 @@ def client_keys_exchange(ip, root):
     
     return response
 
-def send_message(*, ip, idSender, idReceiver, content, server_key_file):
+def send_message(*, ip, port, idMessage = None, idSender, idReceiver, content, MTime = None, key_file):
     packet = {
+        "idMessage": generate_id(ip, "message") if idMessage == None else idMessage,
         "idSender": idSender,
         "idReceiver": idReceiver,
-        "idMessage": generate_id(ip, "message"),
         "content": content,
-        "time": int(round(time.time() * 1000))
+        "time": int(round(time.time() * 1000)) if MTime == None else MTime
     }
 
     packet = json.dumps(packet).encode()
-    packet = encryption.encrypt_message(packet, server_key_file)
+    packet = encryption.encrypt_message(packet, key_file)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-        client.connect((ip, 6002))
+        client.connect((ip, port))
         client.sendall(b'\n\n\n'.join(packet))
         response = json.loads(client.recv(4096).decode())
     
