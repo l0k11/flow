@@ -1,8 +1,8 @@
-import schedule
-import time
+import schedule, time
 
-schedule.every(5).seconds.do(print, "hola")
 
+schedule.every(3).seconds.do(lambda: print("aa"))
+print("aa")
 while True:
     schedule.run_pending()
     time.sleep(1)

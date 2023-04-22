@@ -1,6 +1,8 @@
 import uuid, socket, json, time, sqlite3,\
     functions.encryption as encryption
 
+# Estas son las funciones usadas para gestionar el envío de paquetes a los diferentes servidores 
+
 def generate_id(ip, type):
     if type == "message":
         while True:
@@ -22,7 +24,7 @@ def generate_id(ip, type):
             
     else:
         raise TypeError(f"Type {type} not valid")
-            
+
 def check_id(ip, id: str):
     if id.startswith("u"): table = "users"
     elif id.startswith("m"): table = "messages"
@@ -40,7 +42,7 @@ def check_id(ip, id: str):
         response = json.loads(client.recv(4096).decode())
 
     return True if response["available"] else False
-    
+
 def client_control_con(ip, root):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ip, 6003))

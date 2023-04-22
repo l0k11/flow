@@ -1,5 +1,25 @@
-import socket, threading, json, sqlite3, functions.other as other, datetime,\
+import socket, threading, json, sqlite3, time, functions.other as other, datetime,\
     functions.encryption as en
+
+# Este servidor se encarga de procesar todos los paquetes que no son mensajes, ni tienen
+# relación con ellos y, por lo tanto, pueden ir sin encriptación. Estas conexiones son:
+
+# - Control: El cliente envía cada minuto un paquete al servidor con información de su estado.
+#       Esta conexión se usa para:
+#           - Confirmar que el cliente está activo. 
+#           - Actualizar la IP del cliente.
+#           - Comprobar si hay mensajes que no le han llegado (porque estaba desconectado o por otro motivo)
+#                y si los hubiese, enviarlos.
+
+# - Key: El cliente, en cuanto se conecta, envía un paquete con su clave pública, el servidor la guarda
+#       y responde con su clave pública, garantizando en todas las conexiones que las claves de ambas partes
+#       están actualizadas
+
+# - CheckID: Cuando hay que generar un nuevo ID en el cliente, envía un paquete a este servidor, que responde
+#       si el ID está disponible o no. Esto casi siempre va a decir que está disponible ya que, al usar uuid4()
+#       para generar los IDs, la probabilidad de colisiones es una entre mil millones, y teniendo en cuenta que
+#       cada instalación de esta aplicación es completamente independiente de otra, es prácticamente imposible
+#       que se repitan. Sin embargo, como no es completamente imposible, mejor confirmar que no se repiten.
 
 class ControlServer(threading.Thread):
     def __init__(self, root):
@@ -47,7 +67,10 @@ class ControlServer(threading.Thread):
                         if len(result) == 0:
                             con.execute("INSERT INTO users VALUES (?,?)", (packetID, addr[0]))
                         else:
-                            con.execute("UPDATE users SET ip = ? WHERE id = ?", (addr[0], packetID))
+                            con.execute(
+                                "UPDATE users SET ip = ?, status = 'online', lastCheck = ? WHERE id = ?",
+                                (addr[0], int(round(time.time() * 1000)), packetID)
+                            )
 
                         RPacket = {
                             "type": "control",

@@ -1,5 +1,7 @@
 import socket, sqlite3, uuid, os
-from time import time
+
+# Aquí almaceno funciones varias que he usado en muchos sitios pero que no tenían una
+# categoria específica 
 
 def get_private_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

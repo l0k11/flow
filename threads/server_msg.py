@@ -3,6 +3,10 @@ import socket, threading, json, datetime,\
     functions.encryption as encryption,\
     functions.conection as con
 
+# Este servidor se encarga de recibir mensajes de los clientes, procesarlos y enviarlos 
+# al cliente destino. Usa técnicas de encriptación mixta para garantizar la máxima seguridad 
+# en los intercambios. Las funciones de encriptación explicadas en detalle están en /functions/encryption.py
+
 class MSGServer(threading.Thread):
     def __init__(self, root):
         threading.Thread.__init__(self)
@@ -38,7 +42,7 @@ class MSGServer(threading.Thread):
                 )
                 select = other.execute_db_command(
                     f"{self.root}.db",
-                    "SELECT ip FROM users WHERE id = ?",
+                    "SELECT ip FROM users WHERE id = ? AND status = 'online'",
                     (packet["idReceiver"],)
                 )
                 result = select.fetchall()
@@ -63,6 +67,24 @@ class MSGServer(threading.Thread):
                             "INSERT INTO waiting VALUES (?,?)",
                             (packet["idMessage"], packet["idReceiver"])
                         )
+                        other.execute_db_command(
+                            f"{self.root}",
+                            "UPDATE users SET status='disconnected' WHERE id=?",
+                            (packet["idReceiver"])
+                        )
                         print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
+                
+                else:
+                    other.execute_db_command(
+                            f"{self.root}",
+                            "INSERT INTO waiting VALUES (?,?)",
+                            (packet["idMessage"], packet["idReceiver"])
+                        )
+                    other.execute_db_command(
+                        f"{self.root}",
+                        "UPDATE users SET status='disconnected' WHERE id=?",
+                        (packet["idReceiver"])
+                    )
+                    print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
 
             server.close()

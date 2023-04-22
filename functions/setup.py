@@ -1,7 +1,12 @@
-import os, sqlite3, pathlib, getpass, hashlib, socket, shutil, json,\
+import os, sqlite3, pathlib, getpass, hashlib, shutil,\
     functions.encryption as encryption,\
     functions.conection as con,\
     functions.other as other
+
+# Aquí almaceno las diferentes funciones usadas para preparar tanto el cliente como el servidor
+# para su uso, generando la estructura de las bases de datos, las claves, la contraseña de acceso,
+# y comprobando la conexión del cliente a ambos servidores (en este proceso es cuando se realiza el
+# intercambio de claves) 
 
 def server_db_prepare(file):
     open(file, "w")
@@ -14,7 +19,9 @@ def server_db_prepare(file):
 
             con.execute("""CREATE TABLE users (
                 id CHAR(37) PRIMARY KEY UNIQUE,
-                ip VARCHAR(255)
+                ip VARCHAR(255),
+                status VARCHAR(255),
+                lastCheck VARCHAR(255)
             );""")
             
             con.execute("""CREATE TABLE messages (
@@ -45,16 +52,30 @@ def client_db_prepare(file):
         try:
             con.execute("""CREATE TABLE conversations (
                 id CHAR(37) PRIMARY KEY,
-                name VARCHAR(255) 
+                users VARCHAR(255) 
             );""")
 
             con.execute("""CREATE TABLE contacts (
                 id CHAR(37) PRIMARY KEY,
-                name VARCHAR(255)
+                name VARCHAR(255),
+                lastMsg VARCHAR(4095),
+                lastMsgTime VARCHAR(255)
             );""")
-        except:
+
+            con.execute("""CREATE TABLE messages (
+                id CHAR(37) PRIMARY KEY UNIQUE,
+                conversation_id CHAR(37),
+                sender_id CHAR(37),
+                receiver_id CHAR(37),
+                content VARCHAR(4095),
+                time VARCHAR(255),
+                FOREIGN KEY (conversation_id) REFERENCES conversations(id),
+                FOREIGN KEY (sender_id) REFERENCES contacts(id)
+            );""")
+
+        except Exception as e:
             con.close()
-            raise Exception(f"Cannot find {file}")
+            raise e
 
 def check_files(root, passwd, db, public, private, keys_dir = None):
     root_e = True if os.path.exists(root) else False
@@ -145,12 +166,19 @@ def client_setup():
             print(f"{server_ip} is not a valid server.")
             raise e
 
-    user_id = con.generate_id(server_ip, "user")
-    other.execute_db_command(
+    select = other.execute_db_command(
         db_file,
-        "INSERT INTO contacts VALUES (?,?)",
-        (user_id, "SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED")
+        "SELECT id FROM contacts WHERE name = 'SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'"
     )
+    result = select.fetchall()
+    if result: user_id = result[0][0]
+    else:
+        user_id = con.generate_id(server_ip, "user")
+        other.execute_db_command(
+            db_file,
+            "INSERT INTO contacts VALUES (?,?)",
+            (user_id, "SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED")
+        )
     other.clear_console()
     return {
         "server": server_ip,

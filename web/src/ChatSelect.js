@@ -12,7 +12,9 @@ class ChatSelect extends React.Component{
     }
 
     handleClick(){
-        this.props.func_chid(this.state.id)
+        this.props.func_chid(this.state.id);
+        Notification.requestPermission();
+        new Notification(this.props.name);
     }
 
     render(){
