@@ -38,7 +38,11 @@ class ControlServer(threading.Thread):
             packet = json.loads(packet)
 
             now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            packetID = str(packet["id"])
+            print(packet)
+            try:
+                packetID = str(packet["id"])
+            except:
+                pass
             
             if packet["type"] == "key":
                 try:
@@ -47,6 +51,8 @@ class ControlServer(threading.Thread):
 
                     with open(f'{self.root}public.key') as file:
                         public = file.read()
+                    
+                    print("Key 4")
                         
                     RPacket = {
                         "type": "key",
@@ -129,4 +135,5 @@ class ControlServer(threading.Thread):
 
             RPacket = json.dumps(RPacket)
             conexion.sendall(str.encode(RPacket))
+            print("Key 5")
             conexion.close()

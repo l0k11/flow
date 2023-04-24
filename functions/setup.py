@@ -116,7 +116,9 @@ def create_password(passwd_file):
 
 def test_control(ip: str, root: str):
     try:
+        print("Key 1")
         con.client_keys_exchange(ip, root)
+        print("Key 8")
         return ip
     
     except:
@@ -125,10 +127,11 @@ def test_control(ip: str, root: str):
 def test_messages(ip: str, root: str):
     con.send_message(
         ip = ip,
+        port = 6002,
         idSender = "client",
         idReceiver = "server",
         content = "Nada",
-        server_key_file = f"{root}server.key"
+        key_file = f"{root}server.key"
     )
     return ip
         
