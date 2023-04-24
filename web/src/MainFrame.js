@@ -20,11 +20,9 @@ class MainFrame extends React.Component{
     
     render(){
         if (!this.state.id){
-            console.log("rendering nothing")
             return <div id="mainFrame"></div>
         }
         else {
-            console.log(`rendering ${this.state.id}`)
             this.APIResp = [
                 {
                     "id": "838",
@@ -90,7 +88,7 @@ class MainFrame extends React.Component{
                             <div id='chat'>
                                 {this.dateGroups.map(date => <DateGroup date={date} messages={this.msgPerDate[date]} />)}
                             </div>
-                            <Prompt />
+                            <Prompt  />
                         </div>
                     </div>
                 </div>

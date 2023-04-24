@@ -17,5 +17,8 @@
         "END POINT": "/api/contacts/<string:idContact>",
         "token": "?",
         "name": "name"
+    },
+    "GET MY ID": {
+        "END POINT": "/api/my-id"
     }
 }

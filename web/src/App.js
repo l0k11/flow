@@ -5,22 +5,25 @@ import MainFrame from './MainFrame';
 
 class App extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
-            id: null
-        }
-    }
+            receiverID: null
+        };
+    };
 
     change_id = (id) => {
         this.setState({ id: id });
     }
 
+    my_id(){
+        
+    }
+
     render(){
-        console.log(this.state.id)
         return (
             <main>
                 <SideFrame func_chid={this.change_id}/>
-                <MainFrame id={this.state.id}/>
+                <MainFrame id={this.state.receiverID}/>
             </main>
         );
     };

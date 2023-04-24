@@ -2,19 +2,19 @@ import React from "react";
 
 class ChatSelect extends React.Component{
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
             "name": this.props.name,
             "lastMsg": this.props.lastMsg,
             "id": this.props.id
-        }
-        this.chid = this.handleClick.bind(this)
+        };
+        this.chid = this.handleClick.bind(this);
     }
 
     handleClick(){
         this.props.func_chid(this.state.id);
-        Notification.requestPermission();
-        new Notification(this.props.name);
+        // Notification.requestPermission();
+        // new Notification(this.props.name);
     }
 
     render(){

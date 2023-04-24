@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>API Tester</title>
 </head>
+
 <body>
 	<h1>API Tester</h1>
 	<label for="url-input">API URL:</label>
@@ -11,7 +13,7 @@
 	<button id="post-btn">POST</button>
 	<button id="put-btn">PUT</button>
 	<button id="delete-btn">DELETE</button>
-	
+
 	<p id="response"></p>
 
 	<script>
@@ -42,12 +44,13 @@
 			const url = urlInput.value;
 
 			fetch(url, {
-                method: method
-            })
-			.then(response => response.json())
-			.then(data => responseText.textContent = JSON.stringify(data))
-			.catch(error => console.error(error));
+				method: method
+			})
+				.then(response => response.json())
+				.then(data => responseText.textContent = JSON.stringify(data))
+				.catch(error => console.error(error));
 		}
 	</script>
 </body>
+
 </html>

@@ -5,14 +5,15 @@ class Prompt extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            message: this.props.message,
-            id: this.props.id,
+            senderID: this.props.senderID,
+            receiverID: this.props.receiverID,
             emojiVisibility: false,
             inputValue: ""
         };
         this.emojiToggle = this.emojiSelect.bind(this);
         this.handleEmojiClick = this.handleEmojiClick.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.sendMsg = this.sendMsg.bind(this)
     };
 
     emojiSelect(){
@@ -33,8 +34,13 @@ class Prompt extends React.Component{
 
     handleInputChange(event) {
         this.setState({ inputValue: event.target.value });
-    }
+    };
     
+    sendMsg(){
+        let url = window.location.href + `api/user/${this.state.senderID}/messages/${this.state.receiverID}`
+        console.log(url)
+    }
+
     render(){
         const emojiSVG = 
             <span id="emoji-svg" className="clickable" onClick={this.emojiToggle}>
@@ -44,7 +50,7 @@ class Prompt extends React.Component{
             </span>
 
         const sendSVG = 
-            <span id="send-svg" className="clickable">
+            <span id="send-svg" className="clickable" onClick={this.sendMsg}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 96 960 960" version="1.1">
                     <path d="M120 896V256l760 320-760 320Zm60-93 544-227-544-230v168l242 62-242 60v167Zm0 0V346v457Z"/>
                 </svg>

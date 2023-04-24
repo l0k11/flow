@@ -10,6 +10,7 @@ socket = SocketIO(app)
 CORS(app)
 
 @app.route("/")
+@cross_origin()
 def root():
     return render_template("hola.html")
 
@@ -26,9 +27,10 @@ def messages(idMain, idContact):
             # select = con.execute("SELECT * FROM messages WHERE conversation_id = ?", (conv_id,))
             select = con.execute("SELECT * FROM contacts")
             result = select.fetchall()
-
-
     return jsonify(result)
+
+
+@app.route("/api/my-id", methods = ["GET"])
  
 @socket.on('connect')
 def handle_connect():
