@@ -7,19 +7,24 @@ class MainFrame extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            id: this.props.id
+            senderID: this.props.senderID,
+            receiverID: this.props.receiverID
         }
     }
     
+    // shouldComponentUpdate(nextProps, nextState){
+    //     return this.state.senderID !== nextProps.senderID;
+    // }
+
     componentDidUpdate(prevProps) {
-        if (prevProps.id !== this.props.id) {
-            this.setState({ id: this.props.id });
+        if (prevProps.receiverID !== this.props.receiverID) {
+            this.setState({ receiverID: this.props.receiverID });
         }
     }
-      
     
     render(){
-        if (!this.state.id){
+        console.log(this.state.receiverID)
+        if (!this.state.receiverID){
             return <div id="mainFrame"></div>
         }
         else {
@@ -81,14 +86,14 @@ class MainFrame extends React.Component{
             return (
                 <div id="mainFrame">
                     <div id='bannerContainer'>
-                        <ContactBanner name={this.users[this.state.id]}/>
+                        <ContactBanner name={this.users[this.state.receiverID]}/>
                     </div>
                     <div id='chatContainer'>
                         <div>
                             <div id='chat'>
                                 {this.dateGroups.map(date => <DateGroup date={date} messages={this.msgPerDate[date]} />)}
                             </div>
-                            <Prompt  />
+                            <Prompt receiverID={this.state.receiverID} senderID={this.state.senderID} />
                         </div>
                     </div>
                 </div>

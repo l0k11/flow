@@ -18,12 +18,11 @@ def root():
 @cross_origin()
 def messages(idMain, idContact):
     idPattern = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$"
-    root = f"{pathlib.Path.home()}/.flow/"
 
     # if re.search(idPattern, idMain) and re.search(idPattern, idContact):
     #     conv_id = other.get_conv_id(idMain, idContact, f"{root}.db")
     if request.method == "GET":
-        with sqlite3.connect(f"{root}.db") as con:
+        with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
             # select = con.execute("SELECT * FROM messages WHERE conversation_id = ?", (conv_id,))
             select = con.execute("SELECT * FROM contacts")
             result = select.fetchall()
@@ -31,7 +30,14 @@ def messages(idMain, idContact):
 
 
 @app.route("/api/my-id", methods = ["GET"])
- 
+@cross_origin()
+def my_id():
+    select = other.execute_db_command(
+        f"{pathlib.Path.home()}/.flow/.db",
+        "SELECT id FROM contacts WHERE name = 'SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'"
+    )
+    return jsonify({"id": select.fetchall()[0][0]})
+
 @socket.on('connect')
 def handle_connect():
     print('Client connected')

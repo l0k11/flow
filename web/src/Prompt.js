@@ -37,8 +37,7 @@ class Prompt extends React.Component{
     };
     
     sendMsg(){
-        let url = window.location.href + `api/user/${this.state.senderID}/messages/${this.state.receiverID}`
-        console.log(url)
+        let url = `http://localhost:5000/api/user/${this.state.senderID}/messages/${this.state.receiverID}`
     }
 
     render(){
