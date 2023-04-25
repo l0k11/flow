@@ -23,7 +23,6 @@ class MainFrame extends React.Component{
     }
     
     render(){
-        console.log(this.state.receiverID)
         if (!this.state.receiverID){
             return <div id="mainFrame"></div>
         }

@@ -1,10 +1,10 @@
 {
     "GET MESSAGES": {
-        "END POINT": "/api/user/<string:idMain>/messages/<string:idContact>",
+        "END POINT": "/api/messages/<string:idContact>",
         "token": "?"
     },
     "SEND MESSAGES": {
-        "END POINT": "/api/user/<string:idMain>/messages/<string:idContact>",
+        "END POINT": "/api/messages/<string:idContact>",
         "token": "?",
         "content": "content",
         "time": "time"

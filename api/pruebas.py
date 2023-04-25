@@ -1,4 +1,3 @@
 import requests
 
-re = requests.get("http://localhost:5000/api/user/wer/messages/sdfm")
-print(re.json())
+re = requests.post("http://localhost:5000/api/contacts", json = {"hola": "que tal"})

@@ -14,9 +14,9 @@ CORS(app)
 def root():
     return render_template("hola.html")
 
-@app.route("/api/user/<string:idMain>/messages/<string:idContact>", methods = ["GET", "POST"])
+@app.route("/api/messages/<string:idContact>", methods = ["GET", "POST"])
 @cross_origin()
-def messages(idMain, idContact):
+def messages(idContact):
     idPattern = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$"
 
     # if re.search(idPattern, idMain) and re.search(idPattern, idContact):
@@ -28,7 +28,6 @@ def messages(idMain, idContact):
             result = select.fetchall()
     return jsonify(result)
 
-
 @app.route("/api/my-id", methods = ["GET"])
 @cross_origin()
 def my_id():
@@ -37,6 +36,27 @@ def my_id():
         "SELECT id FROM contacts WHERE name = 'SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'"
     )
     return jsonify({"id": select.fetchall()[0][0]})
+
+@app.route("/api/contacts", methods=["GET", "POST"])
+@cross_origin()
+def contacts():
+    if request.method == "GET":
+        select = other.execute_db_command(
+            f"{pathlib.Path.home()}/.flow/.db",
+            "SELECT * FROM contacts"
+        )
+        result = select.fetchall()
+        del result[0]
+        return jsonify(result)
+    
+    elif request.method == "POST":
+        print(request.json["hola"])
+        return jsonify({"hola": "estoy ready"})
+
+@app.route("/adri/<string:loquesea>")
+def loquesea(loquesea):
+    return jsonify({"hola": loquesea})
+
 
 @socket.on('connect')
 def handle_connect():

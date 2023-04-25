@@ -21,7 +21,6 @@ class MSGClient(threading.Thread):
             packet = encryption.decrypt_message(raw[0], f"{self.root}private.key", raw[1])
             packet = json.loads(packet)
             now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            # TODO: ABSOLUTAMENTE TODO
 
             other.execute_db_command(
                 f"{self.root}.db",

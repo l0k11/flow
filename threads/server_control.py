@@ -38,7 +38,6 @@ class ControlServer(threading.Thread):
             packet = json.loads(packet)
 
             now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(packet)
             try:
                 packetID = str(packet["id"])
             except:
@@ -51,8 +50,6 @@ class ControlServer(threading.Thread):
 
                     with open(f'{self.root}public.key') as file:
                         public = file.read()
-                    
-                    print("Key 4")
                         
                     RPacket = {
                         "type": "key",
@@ -71,7 +68,7 @@ class ControlServer(threading.Thread):
                         result = select.fetchall()
                         
                         if len(result) == 0:
-                            con.execute("INSERT INTO users VALUES (?,?)", (packetID, addr[0]))
+                            con.execute("INSERT INTO users VALUES (?,?,?,?)", (packetID, addr[0], None, None))
                         else:
                             con.execute(
                                 "UPDATE users SET ip = ?, status = 'online', lastCheck = ? WHERE id = ?",
@@ -87,8 +84,8 @@ class ControlServer(threading.Thread):
                         # TODO: TESTEAR ESTO
                         select = con.execute("SELECT idMessage FROM waiting WHERE idReceiver = ?", (packetID,))
                         result = select.fetchall()
+                        messages = []
                         for message in result:
-                            messages = []
                             MSelect = con.execute("SELECT * FROM messages WHERE idMessage = ?", (message[0],))
                             MResult = MSelect.fetchall()
                             messages.append({
@@ -115,7 +112,7 @@ class ControlServer(threading.Thread):
             elif packet["type"] == "checkID":
                 with sqlite3.connect(f"{self.root}.db") as con:
                     try:
-                        select = con.execute(f"SELECT id FROM {packet['table']} WHERE id = ?", (packet["idToCheck"],))
+                        select = con.execute(f"SELECT id FROM {str(packet['table'])} WHERE id = ?", (packet["idToCheck"],))
                         result = select.fetchall()
                         if len(result) == 0:
                             RPacket = {
@@ -135,5 +132,4 @@ class ControlServer(threading.Thread):
 
             RPacket = json.dumps(RPacket)
             conexion.sendall(str.encode(RPacket))
-            print("Key 5")
             conexion.close()

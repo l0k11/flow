@@ -13,7 +13,7 @@ class Prompt extends React.Component{
         this.emojiToggle = this.emojiSelect.bind(this);
         this.handleEmojiClick = this.handleEmojiClick.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.sendMsg = this.sendMsg.bind(this)
+        // this.sendMsg = this.sendMsg.bind(this)
     };
 
     emojiSelect(){
@@ -36,9 +36,9 @@ class Prompt extends React.Component{
         this.setState({ inputValue: event.target.value });
     };
     
-    sendMsg(){
-        let url = `http://localhost:5000/api/user/${this.state.senderID}/messages/${this.state.receiverID}`
-    }
+    // sendMsg(){
+    //     let url = `http://localhost:5000/api/messages/${this.state.receiverID}`
+    // }
 
     render(){
         const emojiSVG = 

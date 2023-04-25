@@ -10,6 +10,7 @@ class App extends React.Component{
             myID: null,
             receiverID: null
         };
+        this.APIURL = "http://localhost:5000"
         // this.my_id = this.my_id.bind(this)
     };
 
@@ -18,7 +19,7 @@ class App extends React.Component{
     }
 
     my_id = () => {
-        let url = "http://localhost:5000/api/my-id";
+        let url = this.APIURL + "/api/my-id";
         fetch(url, {
             method: "GET"
         })
@@ -38,7 +39,7 @@ class App extends React.Component{
         }
         return (
             <main>
-                <SideFrame func_chid={this.change_id}/>
+                <SideFrame func_chid={this.change_id} APIURL={this.APIURL}/>
                 {this.state.myID && <MainFrame receiverID={this.state.receiverID} senderID={this.state.myID}/>}
             </main>
         );
