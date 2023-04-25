@@ -42,6 +42,7 @@ body,
     background-color: var(--white);
     color: var(--main-color-simple);
 }
+
 main {
     height: 100%;
     background-color: var(--main-dark-bg);
@@ -393,14 +394,89 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 8;
+}
 
+#addContact {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-#addContact{
+#addContact > div{
+    z-index: 9;
     min-width: 30%;
-    height: 30%;
-    border: 1px solid red
+    min-height: 30%;
+    background-color: var(--sec-dark-bg);
+    box-shadow: 0 0 0 2px var(--main-color-simple);
+    border-radius: 5px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    gap: 30px;
+}
+
+#addContact h3{
+    color: white;
+}
+
+#addContact form{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    gap: 5px;
+    height: 100%;
+}
+
+#addContact input[type="text"] {
+    background-color: transparent;
+    color: var(--default-font-color);
+    padding: 3px;
+    border: none;
+    box-shadow: 0 1px 0 0 var(--main-color-simple);
+    transition: box-shadow .2s;
+    font-size: 0.9em;
+}
+
+#addContact input[type="text"]:focus {
+    border: none;
+    outline: none;
+    box-shadow: 0 2px 0 0 var(--main-color-simple);
+}
+
+#addContact input[type="text"]:-webkit-autofill,
+#addContact input[type="text"]:-webkit-autofill:hover,
+#addContact input[type="text"]:-webkit-autofill:focus,
+#addContact input[type="text"]:-webkit-autofill:active {
+    transition: 5000s ease-in-out 0s;
+    color: var(--default-font-color)
+}
+
+#addContact form div{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3px;
+    width: 100%;
+    margin-top: 1.5em;
+}
+
+#addContact form div *{
+    border: none;
+    height: 200%;
+    border-radius: 5px;
+}
+
+#addContact form div input{
+    background-image: var(--main-colors-combi);
+    color: white;
+    cursor: pointer;
 }

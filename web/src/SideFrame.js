@@ -79,19 +79,22 @@ class SideFrame extends React.Component{
                             {contactsSVG}
                             {addSVG}
                             {/* TODO: PONER MODO OSCURO / CLARO */}
-                            {this.state.addVisibility && <div id='addContactBG' onClick={this.toggleAdd}>
+                            {this.state.addVisibility && <div id='addContactBG' onClick={this.toggleAdd}></div>}
+                            {this.state.addVisibility &&
                                 <div id='addContact'>
-                                    <h3>Add new contact</h3>
-                                    <form action={this.props.APIURL + "/api/contacts"}>
-                                        <input type='text' name='name' placeholder='Name'/>
-                                        <input type='text' name='ip' placeholder='IP'/>
-                                        <div>
-                                            <input type='submit' value="Add Contact"/>
-                                            <button onClick={this.toggleAdd}>Cancel</button>
-                                        </div>
-                                    </form>
+                                    <div>
+                                        <h3>Add a new contact</h3>
+                                        <form>
+                                            <input type='text' name='name' placeholder='Name'/>
+                                            <input type='text' name='ip' placeholder='IP'/>
+                                            <div>
+                                                <input type='submit' value="Add Contact"/>
+                                                <button onClick={this.toggleAdd}>Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>}
+                            }
                         </div>
                         <div id="search">
                             <input type="text" id="search-bar" placeholder="Search"/>
