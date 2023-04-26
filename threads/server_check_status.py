@@ -24,7 +24,7 @@ class CheckStatus(threading.Thread):
                 result = select.fetchall()
                 min3 = int(round(time.time() * 1000)) - 180000
                 for row in result:
-                    if row[1] < min3:
+                    if row[1] > min3:
                         con.execute("UPDATE users SET status = 'disconnected' WHERE id = ?", (row[0],))
 
             except Exception as e:

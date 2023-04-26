@@ -11,7 +11,6 @@ import pdb
 
 def server_db_prepare(file):
     open(file, "w")
-    print("Archivo creado")
     with sqlite3.connect(file) as con:
         try:
             con.execute("""CREATE TABLE conversations (
