@@ -87,7 +87,7 @@ def check_files(root, passwd, db, public, private, keys_dir = None):
         "keys": os.path.exists(public) and os.path.exists(private),
         "passwd": os.path.exists(passwd),
         "db": os.path.exists(db),
-        "keys_dir": os.path.exists(keys_dir)
+        "keys_dir": os.path.exists(keys_dir) if keys_dir else False
     }
 
 def check_password(passwd_file):
@@ -182,7 +182,7 @@ def client_setup():
 
     other.clear_console()
     with open(f"{root}.env", "w") as file:
-        file.write(f"SERVER_IP={server_ip}\nUSER_ID={user_id}")
+        file.write(f"#DO NOT SHARE NEITHER MODIFY THIS FILE\nSERVER_IP={server_ip}\nUSER_ID={user_id}")
         
     return {
         "server": server_ip,

@@ -49,13 +49,36 @@ def contacts():
         return jsonify(result)
     
     elif request.method == "POST":
-        try:
-            name = request.json["name"]
-            ip = request.json["ip"]
-            con.check_ip()
+        name = request.json["name"]
+        ip = request.json["ip"]
+        id = con.check_ip(os.environ["SERVER_IP"], ip)
+        if id != "0":
+            select = other.execute_db_command(
+                f"{pathlib.Path.home()}/.flow/.db",
+                "SELECT * FROM contacts WHERE id = ?",
+                (id,)
+            )
+            result = select.fetchall()
+            if result: return jsonify({"status": "1"})
+            else:
+                conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+                select = other.execute_db_command(
+                    f"{pathlib.Path.home()}/.flow/.db",
+                    "SELECT TOP 1 content, time FROM messages WHERE conversation_id = ? ORDER BY time DESC",
+                    (conv_id,)
+                )
+                result = select.fetchall()
+                last_msg = result[0] if result else [None, None]
 
-        except Exception as e:
-            raise e
+                other.execute_db_command(
+                    f"{pathlib.Path.home()}/.flow/.db",
+                    "INSERT INTO contacts VALUES (?,?,?,?)",
+                    (id, name, last_msg[0], last_msg[1])
+                )
+                return jsonify({"status": "0"})
+            
+        else: return jsonify({"status": "2"})
+
 
 
 @app.route("/adri/<string:loquesea>")
