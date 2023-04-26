@@ -1,9 +1,11 @@
 from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
-import re, pathlib, sqlite3, uuid, functions.other as other
+from dotenv import load_dotenv
+import re, pathlib, sqlite3, uuid, os,\
+    functions.other as other, functions.conection as con
 
-# <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+load_dotenv(f"{pathlib.Path.home()}/.flow/.env")
 
 app = Flask(__name__)
 socket = SocketIO(app)
@@ -12,6 +14,7 @@ CORS(app)
 @app.route("/")
 @cross_origin()
 def root():
+    # <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     return render_template("hola.html")
 
 @app.route("/api/messages/<string:idContact>", methods = ["GET", "POST"])
@@ -31,11 +34,7 @@ def messages(idContact):
 @app.route("/api/my-id", methods = ["GET"])
 @cross_origin()
 def my_id():
-    select = other.execute_db_command(
-        f"{pathlib.Path.home()}/.flow/.db",
-        "SELECT id FROM contacts WHERE name = 'SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED'"
-    )
-    return jsonify({"id": select.fetchall()[0][0]})
+    return jsonify({"id": os.environ["USER_ID"]})
 
 @app.route("/api/contacts", methods=["GET", "POST"])
 @cross_origin()
@@ -50,8 +49,14 @@ def contacts():
         return jsonify(result)
     
     elif request.method == "POST":
-        print(request.json["hola"])
-        return jsonify({"hola": "estoy ready"})
+        try:
+            name = request.json["name"]
+            ip = request.json["ip"]
+            con.check_ip()
+
+        except Exception as e:
+            raise e
+
 
 @app.route("/adri/<string:loquesea>")
 def loquesea(loquesea):

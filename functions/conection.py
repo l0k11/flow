@@ -43,6 +43,19 @@ def check_id(ip, id: str):
 
     return True if response["available"] else False
 
+def check_ip(serverIP, ipToCheck):
+    packet = {
+        "type": "checkIP",
+        "ipToCheck": ipToCheck
+    }
+    
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((serverIP, 6003))
+        client.sendall(bytes(json.dumps(packet), "utf-8"))
+        response = json.loads(client.recv(4096).decode())
+    
+    return response["id"]
+
 def client_control_con(ip, root):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ip, 6003))

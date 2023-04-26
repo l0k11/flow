@@ -444,7 +444,7 @@ main {
     border: none;
     box-shadow: 0 1px 0 0 var(--main-color-simple);
     transition: box-shadow .2s;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 #addContact input[type="text"]:focus {
@@ -466,17 +466,27 @@ main {
     grid-template-columns: 2fr 1fr;
     gap: 3px;
     width: 100%;
-    margin-top: 1.5em;
+    margin: 1.2em;
 }
 
 #addContact form div *{
     border: none;
     height: 200%;
     border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+
 }
 
-#addContact form div input{
+#addContact form div .add{
     background-image: var(--main-colors-combi);
     color: white;
-    cursor: pointer;
+}
+
+#addContact form div .cancel{
+    background-color: #c7c7c7;
+}
+
+#addContact form div .cancel:hover{
+    background-color: #8c8c8c;
 }

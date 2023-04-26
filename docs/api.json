@@ -14,9 +14,10 @@
         "token": "?"
     },
     "CREATE CONTACT": {
-        "END POINT": "/api/contacts/<string:idContact>",
+        "END POINT": "/api/contacts/",
         "token": "?",
-        "name": "name"
+        "name": "name",
+        "ip": "ip: Control con to get id and availability"
     },
     "GET MY ID": {
         "END POINT": "/api/my-id"

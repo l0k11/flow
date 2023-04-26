@@ -82,17 +82,12 @@ def client_db_prepare(file):
             raise e
 
 def check_files(root, passwd, db, public, private, keys_dir = None):
-    root_e = True if os.path.exists(root) else False
-    keys = True if os.path.exists(public) and os.path.exists(private) else False
-    passwd = True if os.path.exists(passwd) else False
-    db = True if os.path.exists(db) else False
-    keys_dir = True if keys_dir and os.path.exists(keys_dir) else False
     return {
-        "root": root_e,
-        "keys": keys,
-        "passwd": passwd,
-        "db": db,
-        "keys_dir": keys_dir
+        "root": os.path.exists(root),
+        "keys": os.path.exists(public) and os.path.exists(private),
+        "passwd": os.path.exists(passwd),
+        "db": os.path.exists(db),
+        "keys_dir": os.path.exists(keys_dir)
     }
 
 def check_password(passwd_file):
@@ -186,6 +181,9 @@ def client_setup():
             raise e
 
     other.clear_console()
+    with open(f"{root}.env", "w") as file:
+        file.write(f"SERVER_IP={server_ip}\nUSER_ID={user_id}")
+        
     return {
         "server": server_ip,
         "root": root,
