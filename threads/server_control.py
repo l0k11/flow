@@ -68,11 +68,11 @@ class ControlServer(threading.Thread):
                         result = select.fetchall()
                         
                         if len(result) == 0:
-                            con.execute("INSERT INTO users VALUES (?,?,?,?)", (packetID, addr[0], None, None))
+                            con.execute("INSERT INTO users VALUES (?,?,'online',?)", (packetID, addr[0], str(round(time.time() * 1000))))
                         else:
                             con.execute(
                                 "UPDATE users SET ip = ?, status = 'online', lastCheck = ? WHERE id = ?",
-                                (addr[0], int(round(time.time() * 1000)), packetID)
+                                (addr[0], str(round(time.time() * 1000)), packetID)
                             )
 
                         RPacket = {
@@ -84,24 +84,25 @@ class ControlServer(threading.Thread):
                         # TODO: TESTEAR ESTO
                         select = con.execute("SELECT idMessage FROM waiting WHERE idReceiver = ?", (packetID,))
                         result = select.fetchall()
-                        messages = []
-                        for message in result:
-                            MSelect = con.execute("SELECT * FROM messages WHERE idMessage = ?", (message[0],))
-                            MResult = MSelect.fetchall()
-                            messages.append({
-                                "idMessage": MResult[0][0],
-                                "idSender": MResult[0][2],
-                                "idReceiver": MResult[0][3],
-                                "content": MResult[0][4],
-                                "time": MResult[0][5]
-                            })
+                        if result:
+                            messages = []
+                            for message in result:
+                                MSelect = con.execute("SELECT * FROM messages WHERE idMessage = ?", (message[0],))
+                                MResult = MSelect.fetchall()
+                                messages.append({
+                                    "idMessage": MResult[0][0],
+                                    "idSender": MResult[0][2],
+                                    "idReceiver": MResult[0][3],
+                                    "content": MResult[0][4],
+                                    "time": MResult[0][5]
+                                })
+                            
+                            packet = en.encrypt_message("\n\n\n".join(messages).encode(), f'{self.root}client_keys/{packetID}.key')
+                            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+                                client.connect((addr[0], 6001))
+                                client.sendall("\n\n\n".join(packet).encode())
                         
-                        packet = en.encrypt_message("\n\n\n".join(messages).encode(), f'{self.root}client_keys/{packetID}.key')
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-                            client.connect((addr[0], 6001))
-                            client.sendall("\n\n\n".join(packet).encode())
-                        
-                        con.execute("DELETE FROM waiting WHERE idReceiver = ?", (packetID,))
+                            con.execute("DELETE FROM waiting WHERE idReceiver = ?", (packetID,))
                         print(f"{now} {addr[0]}: Control conection correct")
                         
                     except Exception as e:
@@ -129,6 +130,16 @@ class ControlServer(threading.Thread):
                         con.close()
                         conexion.close()
                         raise e
+                    
+            elif packet["type"] == "checkIP":
+                select = other.execute_db_command(
+                    f"{self.root}.db",
+                    "SELECT id FROM users WHERE ip = ?",
+                    (packet["ipToCheck"],)
+                )
+                result = select.fetchall()
+                if result: RPacket = {"id": result[0][0]}
+                else: RPacket = {"id": "0"}
 
             RPacket = json.dumps(RPacket)
             conexion.sendall(str.encode(RPacket))

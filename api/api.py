@@ -64,7 +64,7 @@ def contacts():
                 conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
                 select = other.execute_db_command(
                     f"{pathlib.Path.home()}/.flow/.db",
-                    "SELECT TOP 1 content, time FROM messages WHERE conversation_id = ? ORDER BY time DESC",
+                    "SELECT content, time FROM messages WHERE conversation_id = ? ORDER BY time DESC LIMIT 1",
                     (conv_id,)
                 )
                 result = select.fetchall()

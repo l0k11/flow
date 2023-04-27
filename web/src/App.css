@@ -388,7 +388,7 @@ main {
     align-self: flex-end;
 }
 
-#addContactBG {
+.BGForToggle {
     position: absolute;
     top: 0;
     left: 0;
@@ -489,4 +489,88 @@ main {
 
 #addContact form div .cancel:hover{
     background-color: #8c8c8c;
+}
+
+.error {
+    color: red
+}
+
+#contactList {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#contactList > div{
+    z-index: 9;
+    min-width: 22%;
+    max-height: 50%;
+    background-color: var(--sec-dark-bg);
+    box-shadow: 0 0 0 2px var(--main-color-simple);
+    border-radius: 5px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    gap: 30px;
+}
+
+#contactList h3{
+    color: white;
+}
+
+#contactList ul{
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    overflow: auto;
+    height: 100%;
+}
+
+#contactList ul::-webkit-scrollbar {
+    width: 10px;
+}
+
+#contactList ul::-webkit-scrollbar-thumb {
+    background-color: var(--var-888);
+    border-radius: 5px;
+    transition: background-color .2s;
+}
+
+#contactList ul::-webkit-scrollbar-thumb:hover {
+    background-color: var(--var-666);
+}
+
+#contactList li{
+    border-radius: 5px;
+    background-color: var(--main-color-simple);
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 3px;
+    color: white;
+    display: grid;
+    grid-template-columns: 8fr 1fr;
+}
+
+#contactList li p{
+    display: inline;
+    width: fit-content;
+}
+
+#contactList li span{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#contactList svg{
+    fill: white;
 }

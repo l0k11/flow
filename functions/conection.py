@@ -86,7 +86,6 @@ def client_keys_exchange(ip, root):
         "id": id,
         "key": key,
     }
-    print("Key 2")
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
         client.connect((ip, 6003))
         client.sendall(bytes(json.dumps(packet), "utf-8"))
@@ -94,8 +93,7 @@ def client_keys_exchange(ip, root):
     
     with open(f"{root}server.key", "w", encoding = "utf-8") as file:
         file.write(response["key"])
-    
-    print("Key 6")
+
     return response
 
 def send_message(*, ip, port, idMessage = None, idSender, idReceiver, content, MTime = None, key_file):

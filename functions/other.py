@@ -16,8 +16,8 @@ def clear_console():
 def execute_db_command(db, command, args : tuple = None):
     with sqlite3.connect(db) as con:
         try: 
-            command = con.execute(command, args) if args else con.execute(command)
-            return command
+            select = con.execute(command, args) if args else con.execute(command)
+            return select
         except Exception as e:
             con.close()
             raise e
