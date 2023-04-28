@@ -50,7 +50,7 @@ class SideFrame extends React.Component{
     }
     handleNameChange(event){
         this.setState({ nameValue: event.target.value });
-    }
+    }   
     handleIPChange(event){
         this.setState({ ipValue: event.target.value });
     }
@@ -59,24 +59,41 @@ class SideFrame extends React.Component{
             contactList: value
         })
     }
+    ValidateIPaddress(ipaddress) {  
+        if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {  
+          return (true)  
+        } return (false)  
+    }
+    childClose = () => {
+        this.setState({
+            listVisibility: false,
+            listSearch: ""          
+        });
+    }
+    componentDidMount(){this.getContacts()}
 
     addContact(){
-        fetch(this.props.APIURL + "/api/contacts", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: this.state.nameValue,
-                ip: this.state.ipValue
+        if (this.state.nameValue && this.ValidateIPaddress(this.state.ipValue)){
+            fetch(this.props.APIURL + "/api/contacts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: this.state.nameValue,
+                    ip: this.state.ipValue
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "0"){this.toggleAdd()}
-            else if (data.status === "1"){this.setState({ error: "User already in contacts" })}
-            else if (data.status === "2"){this.setState({ error: "User not found" })}
-        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "0"){
+                    this.toggleAdd()
+                    window.location.reload()
+                }
+                else if (data.status === "1"){this.setState({ error: "User already in contacts" })}
+                else if (data.status === "2"){this.setState({ error: "User not found" })}
+            })
+        } else {this.setState({ error: "Invalid name or IP provided" })}
     }
 
     getContacts(){
@@ -87,9 +104,6 @@ class SideFrame extends React.Component{
         .then(data => {this.updateContactList(data)})
     }
 
-    componentDidMount(){
-        this.getContacts()
-    }
 
     render(){
         const contactsSVG = <span id="contacts-svg" className="clickable" title='Contact list' onClick={this.toggleList}><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 12 12"><g><path d="M 1.539062 11.675781 L 1.539062 10.960938 L 10.460938 10.960938 L 10.460938 11.675781 Z M 1.539062 1.023438 L 1.539062 0.3125 L 10.460938 0.3125 L 10.460938 1.023438 Z M 6 6.550781 C 6.433594 6.550781 6.796875 6.402344 7.09375 6.113281 C 7.390625 5.820312 7.539062 5.460938 7.539062 5.039062 C 7.539062 4.605469 7.390625 4.242188 7.09375 3.949219 C 6.796875 3.660156 6.433594 3.511719 6 3.511719 C 5.574219 3.511719 5.214844 3.660156 4.917969 3.949219 C 4.621094 4.242188 4.476562 4.605469 4.476562 5.039062 C 4.476562 5.460938 4.621094 5.820312 4.917969 6.113281 C 5.214844 6.402344 5.574219 6.550781 6 6.550781 Z M 1.800781 10.25 C 1.492188 10.25 1.226562 10.136719 1 9.90625 C 0.773438 9.675781 0.664062 9.414062 0.664062 9.113281 L 0.664062 2.886719 C 0.664062 2.5625 0.773438 2.292969 1 2.074219 C 1.226562 1.859375 1.492188 1.75 1.800781 1.75 L 10.210938 1.75 C 10.511719 1.75 10.773438 1.863281 11 2.09375 C 11.226562 2.324219 11.335938 2.585938 11.335938 2.886719 L 11.335938 9.113281 C 11.335938 9.414062 11.226562 9.675781 11 9.90625 C 10.773438 10.136719 10.511719 10.25 10.210938 10.25 Z M 2.664062 9.25 L 9.335938 9.25 C 8.972656 8.707031 8.476562 8.292969 7.855469 8 C 7.234375 7.707031 6.617188 7.5625 6 7.5625 C 5.375 7.5625 4.757812 7.707031 4.148438 8 C 3.542969 8.292969 3.046875 8.707031 2.664062 9.25 Z M 2.664062 9.25 "/></g></svg></span>
@@ -111,12 +125,11 @@ class SideFrame extends React.Component{
                             {this.state.listVisibility && <div id='contactList'>
                                     <div>
                                         <h3>Contact List</h3>
-                                        {/* TODO: EDITAR CONTACTOS? */}
+                                        {/* TODO: BUSCAR CONTACTOS? */}
                                         <ul>
-                                            {/* {this.state.contactList.map(contact => {
-                                                return <li>{contact[1]} {editSVG}</li> 
-                                            })} */}
-                                            <ContactItem id="123" name="Luis"/>
+                                            {this.state.contactList.map(contact => {
+                                                return <ContactItem id={contact[0]} name={contact[1]} APIURL={this.props.APIURL}/>
+                                            })}
                                         </ul>
                                     </div>
                                 </div>}
@@ -132,7 +145,7 @@ class SideFrame extends React.Component{
                                             <input type='text' id='ip-input' name='ip' placeholder='IP' onChange={this.handleIPChange} value={this.state.ipValue}/>
                                             {this.state.error && <span className='error'>{this.state.error}</span>}
                                             <div>
-                                                <button className='add' type='button' onClick={this.addContact}>Add Contact</button>
+                                                <button className='add main-btn' type='button' onClick={this.addContact}>Add Contact</button>
                                                 <button className='cancel' onClick={this.toggleAdd}>Cancel</button>
                                             </div>
                                         </form>
@@ -141,6 +154,7 @@ class SideFrame extends React.Component{
                             }
                             
                             {newChatSVG}
+                            {/* TODO: PENSAR ESTO, PROBABLEMENTE LO QUITE */}
                         </div>
                         <div id="search">
                             <input type="text" id="search-bar" placeholder="Search chat"/>

@@ -55,7 +55,8 @@ def client_db_prepare(file):
         try:
             con.execute("""CREATE TABLE conversations (
                 id CHAR(37) PRIMARY KEY,
-                users VARCHAR(255) 
+                users VARCHAR(255),
+                name VARCHAR(255)
             );""")
 
             con.execute("""CREATE TABLE contacts (

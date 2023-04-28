@@ -70,7 +70,7 @@ class MSGServer(threading.Thread):
                         other.execute_db_command(
                             f"{self.root}",
                             "UPDATE users SET status='disconnected' WHERE id=?",
-                            (packet["idReceiver"])
+                            (packet["idReceiver"],)
                         )
                         print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
                 

@@ -36,7 +36,7 @@ def messages(idContact):
 def my_id():
     return jsonify({"id": os.environ["USER_ID"]})
 
-@app.route("/api/contacts", methods=["GET", "POST"])
+@app.route("/api/contacts", methods=["GET", "POST", "PUT", "DELETE"])
 @cross_origin()
 def contacts():
     if request.method == "GET":
@@ -76,15 +76,34 @@ def contacts():
                     (id, name, last_msg[0], last_msg[1])
                 )
                 return jsonify({"status": "0"})
-            
         else: return jsonify({"status": "2"})
 
+    elif request.method == "PUT":
+        name = request.json["name"]
+        id = request.json["id"]
+        check = other.execute_db_command(
+            f"{pathlib.Path.home()}/.flow/.db",
+            "SELECT id FROM contacts WHERE name = ?",
+            (name,)
+        )
+        resultCheck = check.fetchall()
+        if not resultCheck:
+            other.execute_db_command(
+                f"{pathlib.Path.home()}/.flow/.db",
+                "UPDATE contacts SET name = ? WHERE id = ?",
+                (name, id)
+            )
+            return jsonify({"status": "0"})
+        else: return jsonify({"status": "1"})
 
-
-@app.route("/adri/<string:loquesea>")
-def loquesea(loquesea):
-    return jsonify({"hola": loquesea})
-
+    elif request.method == "DELETE":
+        id = request.json["id"]
+        other.execute_db_command(
+            f"{pathlib.Path.home()}/.flow/.db",
+            "DELETE FROM contacts WHERE id = ?",
+            (id,)
+        )
+        return jsonify({"status": "0"})
 
 @socket.on('connect')
 def handle_connect():
