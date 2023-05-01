@@ -64,12 +64,6 @@ class SideFrame extends React.Component{
           return (true)  
         } return (false)  
     }
-    childClose = () => {
-        this.setState({
-            listVisibility: false,
-            listSearch: ""          
-        });
-    }
     componentDidMount(){this.getContacts()}
 
     addContact(){
@@ -157,6 +151,7 @@ class SideFrame extends React.Component{
                             {/* TODO: PENSAR ESTO, PROBABLEMENTE LO QUITE */}
                         </div>
                         <div id="search">
+                            {/* TODO: A LO MEJOR LO QUITO */}
                             <input type="text" id="search-bar" placeholder="Search chat"/>
                             <div>
                                 {clearSVG}

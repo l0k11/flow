@@ -9,17 +9,20 @@
         "content": "content",
         "time": "time"
     },
-    "GET CONTACTS": {
+    "GET CONTACTS": { // HECHO
         "END POINT": "/api/contacts",
         "token": "?"
     },
-    "CREATE CONTACT": {
+    "CREATE CONTACT": { // HECHO
         "END POINT": "/api/contacts/",
         "token": "?",
         "name": "name",
         "ip": "ip: Control con to get id and availability"
     },
-    "GET MY ID": {
+    "GET MY ID": { // HECHO
         "END POINT": "/api/my-id"
+    },
+    "GET CONVS": {
+        "END POINT": "/api/convs/"
     }
 }

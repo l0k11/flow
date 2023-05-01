@@ -50,17 +50,20 @@ def get_conv_id(idSender, idReceiver, db):
 def client_get_conv_id(idSender, idReceiver, db, ip):
     with sqlite3.connect(db) as con:
         try:
-            name = f"{idSender},{idReceiver}"
-            select = con.execute("SELECT id FROM conversations WHERE users = ?", (name,))
+            users = f"{idSender},{idReceiver}"
+            select = con.execute("SELECT id FROM conversations WHERE users = ?", (users,))
             result = select.fetchall()
             if len(result): return result[0][0]
             else:
-                name = f"{idReceiver},{idSender}"
-                select = con.execute("SELECT id FROM conversations WHERE users = ?", (name,))
+                users = f"{idReceiver},{idSender}"
+                select = con.execute("SELECT id FROM conversations WHERE users = ?", (users,))
                 result = select.fetchall()
                 if len(result): return result[0][0]
                 else:
-                    return conection.generate_id(ip, "conversation")
+                    id = conection.generate_id(ip, "conversation")
+                    con.execute("INSERT INTO conversations VALUES (?,?,?)", (id, users, None))
+                    return id
+                    
         except Exception as e:
             con.close()
             raise e

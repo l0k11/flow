@@ -93,6 +93,12 @@ def contacts():
                 "UPDATE contacts SET name = ? WHERE id = ?",
                 (name, id)
             )
+            convID = other.client_get_conv_id(os.environ["USER_ID"], id)
+            other.execute_db_command(
+                f"{pathlib.Path.home()}/.flow/.db",
+                "UPDATE conversations SET name = ? WHERE id = ?",
+                (os.environ["USER_ID"], id)
+            )
             return jsonify({"status": "0"})
         else: return jsonify({"status": "1"})
 
