@@ -1,0 +1,10 @@
+Al crear contacto, crear conv
+Conv tiene hora y ultimo mensaje, no contacto
+El nombre de la conv será:
+    - Nombre de contacto
+    - IP de la otra persona
+Proceso:
+    TODO: HACER ESTO CUANDO SE PUEDAN ENVIAR MENSAJES
+    - Cuando llegue mensaje, ver convs:
+        - Si el nombre de la conv es una IP, ver si ha actualizado la IP:
+            - check_ip()

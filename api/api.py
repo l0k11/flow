@@ -69,11 +69,11 @@ def contacts():
                 )
                 result = select.fetchall()
                 last_msg = result[0] if result else [None, None]
-
+                
                 other.execute_db_command(
                     f"{pathlib.Path.home()}/.flow/.db",
-                    "INSERT INTO contacts VALUES (?,?,?,?)",
-                    (id, name, last_msg[0], last_msg[1])
+                    "INSERT INTO contacts VALUES (?,?)",
+                    (id, name)
                 )
                 return jsonify({"status": "0"})
         else: return jsonify({"status": "2"})
@@ -97,7 +97,7 @@ def contacts():
             other.execute_db_command(
                 f"{pathlib.Path.home()}/.flow/.db",
                 "UPDATE conversations SET name = ? WHERE id = ?",
-                (os.environ["USER_ID"], id)
+                (os.environ["USER_ID"], convID)
             )
             return jsonify({"status": "0"})
         else: return jsonify({"status": "1"})
@@ -110,6 +110,19 @@ def contacts():
             (id,)
         )
         return jsonify({"status": "0"})
+
+
+@app.route("/api/convs", methods=["GET", "POST", "DELETE"])
+@cross_origin()
+def convs():
+    if request.method == "GET":
+        select = other.execute_db_command(
+            f"{pathlib.Path.home()}/.flow/.db",
+            "SELECT * FROM conversations"
+        )
+        result = select.fetchall()
+        del result[0]
+        return jsonify(result)
 
 @socket.on('connect')
 def handle_connect():

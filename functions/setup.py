@@ -56,14 +56,14 @@ def client_db_prepare(file):
             con.execute("""CREATE TABLE conversations (
                 id CHAR(37) PRIMARY KEY,
                 users VARCHAR(255),
-                name VARCHAR(255)
+                name VARCHAR(255),
+                lastMsg VARCHAR(4095),
+                lastMsgTime VARCHAR(255)
             );""")
 
             con.execute("""CREATE TABLE contacts (
                 id CHAR(37) PRIMARY KEY,
-                name VARCHAR(255),
-                lastMsg VARCHAR(4095),
-                lastMsgTime VARCHAR(255)
+                name VARCHAR(255)
             );""")
 
             con.execute("""CREATE TABLE messages (
