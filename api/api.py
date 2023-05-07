@@ -69,7 +69,7 @@ def contacts():
                 )
                 result = select.fetchall()
                 last_msg = result[0] if result else [None, None]
-                
+                # TODO: ACABAR ESTO
                 other.execute_db_command(
                     f"{pathlib.Path.home()}/.flow/.db",
                     "INSERT INTO contacts VALUES (?,?)",
