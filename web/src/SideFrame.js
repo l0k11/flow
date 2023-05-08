@@ -19,7 +19,6 @@ class SideFrame extends React.Component{
         this.handleNameChange = this.handleNameChange.bind(this)
         this.handleIPChange = this.handleIPChange.bind(this)
         this.addContact = this.addContact.bind(this)
-        this.getContacts = this.getContacts.bind(this)
     }
 
     toggleAdd(){
@@ -96,6 +95,10 @@ class SideFrame extends React.Component{
         })
         .then(response => response.json())
         .then(data => {this.updateContactList(data)})
+    }
+
+    getConvs(){
+        
     }
 
 

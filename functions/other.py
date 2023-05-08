@@ -53,16 +53,27 @@ def client_get_conv_id(idSender, idReceiver, db, ip):
             users = f"{idSender},{idReceiver}"
             select = con.execute("SELECT id FROM conversations WHERE users = ?", (users,))
             result = select.fetchall()
-            if len(result): return result[0][0]
+            if len(result): return {
+                "status": "exist",
+                "id": result[0][0],
+                "users": users
+            }
             else:
                 users = f"{idReceiver},{idSender}"
                 select = con.execute("SELECT id FROM conversations WHERE users = ?", (users,))
                 result = select.fetchall()
-                if len(result): return result[0][0]
+                if len(result): return {
+                "status": "exist",
+                "id": result[0][0]
+            }
                 else:
                     id = conection.generate_id(ip, "conversation")
-                    con.execute("INSERT INTO conversations VALUES (?,?,?)", (id, users, None))
-                    return id
+                    con.execute("INSERT INTO conversations VALUES (?,?,?,?,?)", (id, users, None, None, None))
+                    return {
+                        "status": "created",
+                        "id": id,
+                        "users": users
+                    }
                     
         except Exception as e:
             con.close()

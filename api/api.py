@@ -61,20 +61,21 @@ def contacts():
             result = select.fetchall()
             if result: return jsonify({"status": "1"})
             else:
-                conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
-                select = other.execute_db_command(
-                    f"{pathlib.Path.home()}/.flow/.db",
-                    "SELECT content, time FROM messages WHERE conversation_id = ? ORDER BY time DESC LIMIT 1",
-                    (conv_id,)
-                )
-                result = select.fetchall()
-                last_msg = result[0] if result else [None, None]
-                # TODO: ACABAR ESTO
                 other.execute_db_command(
                     f"{pathlib.Path.home()}/.flow/.db",
                     "INSERT INTO contacts VALUES (?,?)",
                     (id, name)
                 )
+                conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+                if conv_id["status"] == "created":
+                    return jsonify({"status": "0"})
+                
+                other.execute_db_command(
+                    f"{pathlib.Path.home()}/.flow/.db",
+                    "UPDATE conversations SET name = ? WHERE id = ?",
+                    (name, conv_id["id"])
+                )
+
                 return jsonify({"status": "0"})
         else: return jsonify({"status": "2"})
 
@@ -97,7 +98,7 @@ def contacts():
             other.execute_db_command(
                 f"{pathlib.Path.home()}/.flow/.db",
                 "UPDATE conversations SET name = ? WHERE id = ?",
-                (os.environ["USER_ID"], convID)
+                (name, convID)
             )
             return jsonify({"status": "0"})
         else: return jsonify({"status": "1"})
@@ -121,7 +122,6 @@ def convs():
             "SELECT * FROM conversations"
         )
         result = select.fetchall()
-        del result[0]
         return jsonify(result)
 
 @socket.on('connect')
