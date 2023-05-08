@@ -2,7 +2,6 @@ import os, sqlite3, pathlib, getpass, hashlib, shutil,\
     functions.encryption as encryption,\
     functions.conection as con,\
     functions.other as other
-import pdb
 
 # Aquí almaceno las diferentes funciones usadas para preparar tanto el cliente como el servidor
 # para su uso, generando la estructura de las bases de datos, las claves, la contraseña de acceso,
@@ -43,8 +42,6 @@ def server_db_prepare(file):
                 FOREIGN KEY (idMessage) REFERENCES messages(id),
                 FOREIGN KEY (idReceiver) REFERENCES users(id)
             );""")
-            print("Esqueleto hecho")
-            pdb.set_trace()
         except Exception as e:
             con.close()
             raise e
@@ -128,7 +125,7 @@ def test_control(ip: str, root: str, db_file):
                 "INSERT INTO contacts VALUES (?,?,?,?)",
                 (user_id, "SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED", None, None)
             )
-        
+        # TODO: ERROR EN CLAVES?
         con.client_keys_exchange(ip, root)
         return user_id
         
