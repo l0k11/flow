@@ -122,14 +122,14 @@ def test_control(ip: str, root: str, db_file):
             user_id = con.generate_id(ip, "user")
             other.execute_db_command(
                 db_file,
-                "INSERT INTO contacts VALUES (?,?,?,?)",
-                (user_id, "SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED", None, None)
+                "INSERT INTO contacts VALUES (?,?)",
+                (user_id, "SUPER UNIQUE CONTACT NAME THAT WILL NOT BE DISPLAYED")
             )
-        # TODO: ERROR EN CLAVES?
         con.client_keys_exchange(ip, root)
         return user_id
         
-    except:
+    except Exception as e:
+        raise e
         return False
     
 def test_messages(ip: str, root: str):
