@@ -67,13 +67,11 @@ def contacts():
                     (id, name)
                 )
                 conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
-                if conv_id["status"] == "created":
-                    return jsonify({"status": "0"})
                 
                 other.execute_db_command(
                     f"{pathlib.Path.home()}/.flow/.db",
                     "UPDATE conversations SET name = ? WHERE id = ?",
-                    (name, conv_id["id"])
+                    (name, conv_id)
                 )
 
                 return jsonify({"status": "0"})
@@ -94,17 +92,25 @@ def contacts():
                 "UPDATE contacts SET name = ? WHERE id = ?",
                 (name, id)
             )
-            convID = other.client_get_conv_id(os.environ["USER_ID"], id)
+            conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
             other.execute_db_command(
                 f"{pathlib.Path.home()}/.flow/.db",
                 "UPDATE conversations SET name = ? WHERE id = ?",
-                (name, convID)
+                (name, conv_id)
             )
             return jsonify({"status": "0"})
         else: return jsonify({"status": "1"})
 
     elif request.method == "DELETE":
         id = request.json["id"]
+        ip = con.get_ip(id, os.environ["SERVER_IP"])
+        conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+        print(f"Cambiando nombre a {ip}")
+        other.execute_db_command(
+            f"{pathlib.Path.home()}/.flow/.db",
+            "UPDATE conversations SET name = ? WHERE id = ?",
+            (ip, conv_id)
+        )
         other.execute_db_command(
             f"{pathlib.Path.home()}/.flow/.db",
             "DELETE FROM contacts WHERE id = ?",
@@ -112,17 +118,15 @@ def contacts():
         )
         return jsonify({"status": "0"})
 
-
 @app.route("/api/convs", methods=["GET", "POST", "DELETE"])
 @cross_origin()
 def convs():
     if request.method == "GET":
         select = other.execute_db_command(
             f"{pathlib.Path.home()}/.flow/.db",
-            "SELECT * FROM conversations"
+            "SELECT id, name, lastMsg, lastMsgTime FROM conversations ORDER BY lastMsgTime DESC"
         )
         result = select.fetchall()
-        print("Quitar esto")
         return jsonify(result)
 
 @socket.on('connect')

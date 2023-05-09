@@ -128,8 +128,7 @@ def test_control(ip: str, root: str, db_file):
         con.client_keys_exchange(ip, root)
         return user_id
         
-    except Exception as e:
-        raise e
+    except:
         return False
     
 def test_messages(ip: str, root: str):

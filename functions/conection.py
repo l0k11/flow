@@ -115,3 +115,19 @@ def send_message(*, ip, port, idMessage = None, idSender, idReceiver, content, M
     print(response)
     if not response["status"]: return 1
     return 0
+
+def get_ip(id, ip):
+    packet = {
+        "type": "getIP",
+        "id": id
+    }
+    
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((ip, 6003))
+        client.sendall(bytes(json.dumps(packet), "utf-8"))
+        response = json.loads(client.recv(4096).decode())
+    
+    print(response)
+    print(type(response))
+    if response["ip"] != "0": return response["ip"]
+    else: return "Es imposible que llegue aquí"
