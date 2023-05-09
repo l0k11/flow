@@ -122,6 +122,7 @@ def convs():
             "SELECT * FROM conversations"
         )
         result = select.fetchall()
+        print("Quitar esto")
         return jsonify(result)
 
 @socket.on('connect')
