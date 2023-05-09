@@ -12,7 +12,8 @@ class SideFrame extends React.Component{
             error: "",
             listVisibility: false,
             listSearch: "",
-            contactList: []
+            contactList: [],
+            convList: []
         };
         this.toggleAdd = this.toggleAdd.bind(this);
         this.toggleList = this.toggleList.bind(this);
@@ -58,12 +59,20 @@ class SideFrame extends React.Component{
             contactList: value
         })
     }
+    updateConvList(value){
+        this.setState({
+            convList: value
+        })
+    }
     ValidateIPaddress(ipaddress) {  
         if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {  
           return (true)  
         } return (false)  
     }
-    componentDidMount(){this.getContacts()}
+    componentDidMount(){
+        this.getContacts();
+        this.getConvs();
+    }
 
     addContact(){
         if (this.state.nameValue && this.ValidateIPaddress(this.state.ipValue)){
@@ -98,7 +107,11 @@ class SideFrame extends React.Component{
     }
 
     getConvs(){
-        
+        fetch(this.props.APIURL + "/api/convs", {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(data => {this.updateConvList(data)})
     }
 
 
@@ -163,6 +176,10 @@ class SideFrame extends React.Component{
                         </div>
                     </div>
                     <div id="chats">
+                        {this.state.convList.map(conv => {
+                            return <ChatSelect id={conv[0]} name={conv[1]} lastMsg={conv[2]} lastMsgTime={conv[3]} func_chid={this.props.func_chid} APIURL={this.props.APIURL}/>
+                        })}
+                        {/* API URL PARA BORRAR CONVERSACIONES */}
                         <ChatSelect name="Isaac" lastMsg="hi" id="321" func_chid={this.props.func_chid}/>
                         <ChatSelect name="Luis" lastMsg="hola" id="123" func_chid={this.props.func_chid}/>
                     </div>

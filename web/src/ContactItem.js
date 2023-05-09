@@ -77,7 +77,6 @@ class ContactItem extends React.Component{
                 id: this.state.id
             })
         })
-        .then(this.toggleDelete())
         .then(window.location.reload())
     }
 
