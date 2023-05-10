@@ -4,8 +4,7 @@ class ContactBanner extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            name: this.props.name,
-            id: this.props.id
+            name: this.props.name
         }
     }
     render(){

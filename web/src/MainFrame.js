@@ -60,11 +60,6 @@ class MainFrame extends React.Component{
                 },
             ]
 
-            this.users = {
-                "123": "Luis",
-                "321": "Isaac"
-            }
-
             this.dateGroups = [];
             this.msgPerDate = {};
 
@@ -81,11 +76,12 @@ class MainFrame extends React.Component{
                 };
                 this.msgPerDate[date].unshift(msg);
             });
-
             return (
                 <div id="mainFrame">
                     <div id='bannerContainer'>
-                        <ContactBanner name={this.users[this.state.receiverID]}/>
+                        <div className="banner">
+                            {this.props.receiverName}
+                        </div>
                     </div>
                     <div id='chatContainer'>
                         <div>

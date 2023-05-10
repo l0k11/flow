@@ -8,14 +8,14 @@ class App extends React.Component{
         super(props);
         this.state = {
             myID: null,
-            receiverID: null
+            receiverID: null,
+            receiverName: null
         };
         this.APIURL = "http://localhost:5000"
-        // this.my_id = this.my_id.bind(this)
     };
 
-    change_id = (id) => {
-        this.setState({ receiverID: id });
+    change_id = (id, name) => {
+        this.setState({ receiverID: id, receiverName: name });
     }
 
     my_id = () => {
@@ -40,7 +40,7 @@ class App extends React.Component{
         return (
             <main>
                 <SideFrame func_chid={this.change_id} APIURL={this.APIURL}/>
-                {this.state.myID && <MainFrame receiverID={this.state.receiverID} senderID={this.state.myID}/>}
+                {this.state.myID && <MainFrame receiverID={this.state.receiverID} receiverName={this.state.receiverName} senderID={this.state.myID}/>}
             </main>
         );
     };
