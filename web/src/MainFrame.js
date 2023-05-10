@@ -1,5 +1,4 @@
 import React from 'react';
-import ContactBanner from './ContactBanner';
 import Prompt from './Prompt';
 import DateGroup from './MessageDateGroup';
 
@@ -8,62 +7,45 @@ class MainFrame extends React.Component{
         super(props);
         this.state = {
             senderID: this.props.senderID,
-            receiverID: this.props.receiverID
+            receiverID: this.props.receiverID,
+            MSGList: []
         }
     }
-    
-    // shouldComponentUpdate(nextProps, nextState){
-    //     return this.state.senderID !== nextProps.senderID;
-    // }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.receiverID !== this.props.receiverID) {
-            this.setState({ receiverID: this.props.receiverID });
+    shouldComponentUpdate(nextProps, nextState){
+        if (nextProps.receiverID !== this.props.receiverID){
+            this.setState({ receiverID: nextProps.receiverID });
+            this.getMessages(nextProps.receiverID);
+            return true;
         }
+        return false;
+    }
+    // componentDidUpdate(prevProps) {
+    //     if (prevProps.receiverID !== this.props.receiverID) {
+    //         this.setState({ receiverID: this.props.receiverID });
+    //         this.getMessages(this.props.receiverID);
+    //     };
+    // };
+    updateMSGList(value){
+        this.setState({
+            contactList: value
+        })
+    }
+    getMessages(id){
+        fetch(this.props.APIURL + "/api/messages/" + id)
+        .then(response => response.json())
+        .then(data => {console.log(data); this.updateMSGList(data)})
     }
     
     render(){
-        if (!this.state.receiverID){
+        if (!this.state.receiverID && this.state.MSGList === []){
             return <div id="mainFrame"></div>
         }
         else {
-            this.APIResp = [
-                {
-                    "id": "838",
-                    "type": "income",
-                    "content": "Hola",
-                    "time": "1678227604"
-                },
-                {
-                    "id": "839",
-                    "type": "outcome",
-                    "content": "Que tal?",
-                    "time": "1678227920"
-                },
-                {
-                    "id": "840",
-                    "type": "outcome",
-                    "content": "Que tal?",
-                    "time": "1678308399"
-                },
-                {
-                    "id": "838",
-                    "type": "income",
-                    "content": "Hola",
-                    "time": "1678538144"
-                },
-                {
-                    "id": "838",
-                    "type": "outcome",
-                    "content": "aDIOS",
-                    "time": "1678538144"
-                },
-            ]
-
             this.dateGroups = [];
             this.msgPerDate = {};
 
-            this.APIResp.forEach(msg => {
+            this.state.MSGList.forEach(msg => {
                 let date = new Date(msg.time * 1000).toLocaleDateString('en-US', {
                     year: "numeric",
                     month: "long",

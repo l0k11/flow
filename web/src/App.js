@@ -40,7 +40,7 @@ class App extends React.Component{
         return (
             <main>
                 <SideFrame func_chid={this.change_id} APIURL={this.APIURL}/>
-                {this.state.myID && <MainFrame receiverID={this.state.receiverID} receiverName={this.state.receiverName} senderID={this.state.myID}/>}
+                {this.state.myID && <MainFrame receiverID={this.state.receiverID} receiverName={this.state.receiverName} senderID={this.state.myID} APIURL={this.APIURL}/>}
             </main>
         );
     };

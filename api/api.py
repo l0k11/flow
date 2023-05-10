@@ -17,19 +17,18 @@ def root():
     # <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     return render_template("hola.html")
 
-@app.route("/api/messages/<string:idContact>", methods = ["GET", "POST"])
+@app.route("/api/messages/<string:id>", methods = ["GET", "POST"])
 @cross_origin()
-def messages(idContact):
-    idPattern = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$"
-
-    # if re.search(idPattern, idMain) and re.search(idPattern, idContact):
-    #     conv_id = other.get_conv_id(idMain, idContact, f"{root}.db")
+def messages(id):
     if request.method == "GET":
+        my_id = os.environ["USER_ID"]
+        other_id = id
+        conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+
         with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
-            # select = con.execute("SELECT * FROM messages WHERE conversation_id = ?", (conv_id,))
-            select = con.execute("SELECT * FROM contacts")
+            select = con.execute("SELECT sender_id, receiver_id, content, time FROM messages WHERE conversation_id = ?", (conv_id,))
             result = select.fetchall()
-    return jsonify(result)
+        return jsonify(result)
 
 @app.route("/api/my-id", methods = ["GET"])
 @cross_origin()
