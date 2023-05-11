@@ -23,11 +23,13 @@ def messages(id):
     if request.method == "GET":
         my_id = os.environ["USER_ID"]
         other_id = id
+        print(other_id)
         conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
-
+        print(conv_id)
         with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
             select = con.execute("SELECT sender_id, receiver_id, content, time FROM messages WHERE conversation_id = ?", (conv_id,))
             result = select.fetchall()
+        print(result)
         return jsonify(result)
 
 @app.route("/api/my-id", methods = ["GET"])
@@ -123,7 +125,7 @@ def convs():
     if request.method == "GET":
         select = other.execute_db_command(
             f"{pathlib.Path.home()}/.flow/.db",
-            "SELECT id, name, lastMsg, lastMsgTime FROM conversations ORDER BY lastMsgTime DESC"
+            "SELECT * FROM conversations ORDER BY lastMsgTime DESC"
         )
         result = select.fetchall()
         return jsonify(result)

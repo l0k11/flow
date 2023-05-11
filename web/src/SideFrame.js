@@ -177,7 +177,9 @@ class SideFrame extends React.Component{
                     </div>
                     <div id="chats">
                         {this.state.convList.map(conv => {
-                            return <ChatSelect id={conv[0]} name={conv[1]} lastMsg={conv[2]} lastMsgTime={conv[3]} func_chid={this.props.func_chid} APIURL={this.props.APIURL}/>
+                            let contactsArray = conv[1].split(",")
+                            let contactID = contactsArray[0] === this.props.myID ? contactsArray[1] : contactsArray[0]
+                            return <ChatSelect id={contactID} name={conv[2]} lastMsg={conv[3]} lastMsgTime={conv[4]} func_chid={this.props.func_chid} APIURL={this.props.APIURL}/>
                         })}
                         {/* API URL PARA BORRAR CONVERSACIONES */}
                         <ChatSelect name="Isaac" lastMsg="hi" id="321" func_chid={this.props.func_chid}/>

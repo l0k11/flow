@@ -1,5 +1,5 @@
 import sqlite3, pathlib, uuid
-conv_id = "c873bfb85-f897-4398-b9b0-a06c7bc73de9"
+conv_id = "ce8e5351f-6ed7-40d5-be39-6f8f058a8b08"
 my_id = "u37c64162-f8c1-4985-ae09-d67ef858c571"
 other_id = "u1bb37dff-c60e-4f29-977f-28a63015b4a6"
 with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
