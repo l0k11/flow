@@ -13,17 +13,18 @@ class MainFrame extends React.Component{
     }
 
     shouldComponentUpdate(nextProps, nextState){
+        console.log(nextState.MSGList)
+        console.log(this.state.MSGList)
         if (nextProps.receiverID !== this.props.receiverID){
             this.setState({ receiverID: nextProps.receiverID });
             this.getMessages(nextProps.receiverID);
             return true;
-        } if (nextState.MSGList !== this.state.MSGList) {
+        } if (nextState.MSGList === this.state.MSGList) {
             return true;
         }
         return false;
     }
     updateMSGList(value){
-        console.log("Updating...")
         this.setState({
             MSGList: value
         })
@@ -32,6 +33,11 @@ class MainFrame extends React.Component{
         fetch(this.props.APIURL + "/api/messages/" + id)
         .then(response => response.json())
         .then(data => {this.updateMSGList(data)})
+    }
+    update_msgList = (msg) => {
+        let newList = this.state.MSGList
+        newList.push(msg)
+        this.setState({ MSGList: newList });
     }
     
     render(){
@@ -52,9 +58,8 @@ class MainFrame extends React.Component{
                     this.dateGroups.push(date);
                     this.msgPerDate[date] = []
                 };
-                this.msgPerDate[date].push(msg)
+                this.msgPerDate[date].unshift(msg)
             });
-            console.log(this.msgPerDate)
 
             return (
                 <div id="mainFrame">
@@ -68,7 +73,7 @@ class MainFrame extends React.Component{
                             <div id='chat'>
                                 {this.dateGroups.map(date => <DateGroup date={date} messages={this.msgPerDate[date]} />)}
                             </div>
-                            <Prompt receiverID={this.state.receiverID} senderID={this.state.senderID} />
+                            <Prompt receiverID={this.state.receiverID} senderID={this.state.senderID} update_msgList={this.update_msgList}/>
                         </div>
                     </div>
                 </div>

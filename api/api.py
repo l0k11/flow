@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, make_response
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
@@ -23,13 +23,10 @@ def messages(id):
     if request.method == "GET":
         my_id = os.environ["USER_ID"]
         other_id = id
-        print(other_id)
         conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
-        print(conv_id)
         with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
             select = con.execute("SELECT sender_id, receiver_id, content, time FROM messages WHERE conversation_id = ?", (conv_id,))
             result = select.fetchall()
-        print(result)
         return jsonify(result)
 
 @app.route("/api/my-id", methods = ["GET"])
@@ -37,7 +34,7 @@ def messages(id):
 def my_id():
     return jsonify({"id": os.environ["USER_ID"]})
 
-@app.route("/api/contacts", methods=["GET", "POST", "PUT", "DELETE"])
+@app.route("/api/contacts", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 @cross_origin()
 def contacts():
     if request.method == "GET":
@@ -102,11 +99,18 @@ def contacts():
             return jsonify({"status": "0"})
         else: return jsonify({"status": "1"})
 
-    elif request.method == "DELETE":
+    elif request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "DELETE")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
+
+    elif request.method == "DELETE" or request.method == "OPTIONS":
         id = request.json["id"]
+        print(os.environ["SERVER_IP"])
         ip = con.get_ip(id, os.environ["SERVER_IP"])
         conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
-        print(f"Cambiando nombre a {ip}")
         other.execute_db_command(
             f"{pathlib.Path.home()}/.flow/.db",
             "UPDATE conversations SET name = ? WHERE id = ?",

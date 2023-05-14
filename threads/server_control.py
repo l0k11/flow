@@ -142,7 +142,6 @@ class ControlServer(threading.Thread):
                 else: RPacket = {"id": "0"}
 
             elif packet["type"] == "getIP":
-                print(packet)
                 select = other.execute_db_command(
                     f"{self.root}.db",
                     "SELECT ip FROM users WHERE id = ?",
@@ -153,7 +152,5 @@ class ControlServer(threading.Thread):
                 else: RPacket = {"ip": "0"}
 
             RPacket = json.dumps(RPacket)
-            print(RPacket)
-            print(type(RPacket))
             conexion.sendall(bytes(RPacket, "utf-8"))
             conexion.close()

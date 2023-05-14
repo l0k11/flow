@@ -182,8 +182,6 @@ class SideFrame extends React.Component{
                             return <ChatSelect id={contactID} name={conv[2]} lastMsg={conv[3]} lastMsgTime={conv[4]} func_chid={this.props.func_chid} APIURL={this.props.APIURL}/>
                         })}
                         {/* API URL PARA BORRAR CONVERSACIONES */}
-                        <ChatSelect name="Isaac" lastMsg="hi" id="321" func_chid={this.props.func_chid}/>
-                        <ChatSelect name="Luis" lastMsg="hola" id="123" func_chid={this.props.func_chid}/>
                     </div>
                 </div>
             </div>

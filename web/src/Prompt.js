@@ -13,7 +13,8 @@ class Prompt extends React.Component{
         this.emojiToggle = this.emojiSelect.bind(this);
         this.handleEmojiClick = this.handleEmojiClick.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        // this.sendMsg = this.sendMsg.bind(this)
+        this.sendMsg = this.sendMsg.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
     };
 
     emojiSelect(){
@@ -27,18 +28,21 @@ class Prompt extends React.Component{
             });
         };
     };
-
     handleEmojiClick(emojiObject, event){
         this.setState({ inputValue: this.state.inputValue + emojiObject.emoji });
     };
-
     handleInputChange(event) {
         this.setState({ inputValue: event.target.value });
     };
-    
-    // sendMsg(){
-    //     let url = `http://localhost:5000/api/messages/${this.state.receiverID}`
-    // }
+    handleKeyDown(event){
+        if (event.key === 'Enter') {
+            this.sendMsg()
+        }
+    }
+    sendMsg(){
+        this.props.update_msgList([this.props.senderID, this.props.receiverID, this.state.inputValue, Date.now() / 1000]);
+        this.setState({ inputValue: "" });
+    }
 
     render(){
         const emojiSVG = 
@@ -60,7 +64,8 @@ class Prompt extends React.Component{
                 {emojiSVG}
                 {this.state.emojiVisibility && <div id="emojiPicker"><EmojiPicker onEmojiClick={this.handleEmojiClick} theme="dark"/></div>}
                 {this.state.emojiVisibility && <div id="emojiBGToggle" onClick={this.emojiToggle}></div>}
-                <input type='text' placeholder="Type your message..." value={this.state.inputValue} onChange={this.handleInputChange}/>
+                <input type='text' placeholder="Type your message..." value={this.state.inputValue} onChange={this.handleInputChange} onKeyDown={this.handleKeyDown}/>
+                {/* TODO: ARREGLAR MENSAJES LARGOS */}
                 {sendSVG}
             </div>
         )
