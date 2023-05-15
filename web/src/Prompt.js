@@ -40,7 +40,20 @@ class Prompt extends React.Component{
         }
     }
     sendMsg(){
-        this.props.update_msgList([this.props.senderID, this.props.receiverID, this.state.inputValue, Date.now() / 1000]);
+        let time = Date.now() / 1000
+        this.props.update_msgList([this.state.senderID, this.state.receiverID, this.state.inputValue, time]);
+        fetch(this.props.APIURL + "/api/messages/" + this.state.receiverID, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                content: this.state.inputValue,
+                time: time
+            })
+        })
+        .then(response => response.json())
+        .then(data => {this.setMSGList(data)})
         this.setState({ inputValue: "" });
     }
 

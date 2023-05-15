@@ -14,5 +14,4 @@ with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
     con.execute("INSERT INTO messages VALUES (?,?,?,?,?,?)",
         (f"m{uuid.uuid4()}", conv_id, my_id, other_id, "5", "1683739411"))
     con.execute("INSERT INTO messages VALUES (?,?,?,?,?,?)",
-        (f"m{uuid.uuid4()}", conv_id, my_id, other_id, "6", "1683739411"))
-    
+        (f"m{uuid.uuid4()}", conv_id, my_id, other_id, "6", "1683739411"))    

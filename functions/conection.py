@@ -108,13 +108,15 @@ def send_message(*, ip, port, idMessage = None, idSender, idReceiver, content, M
     packet = json.dumps(packet).encode()
     packet = encryption.encrypt_message(packet, key_file)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-        client.connect((ip, port))
-        client.sendall(b'\n\n\n'.join(packet))
-        response = json.loads(client.recv(4096).decode())
-    
-    print(response)
-    if not response["status"]: return 1
-    return 0
+        try:
+            client.connect((ip, port))
+            client.sendall(b'\n\n\n'.join(packet))
+            response = json.loads(client.recv(4096).decode())
+
+            if not response["status"]: return 1
+            return 0
+        except:
+            return 1
 
 def get_ip(id, ip):
     packet = {

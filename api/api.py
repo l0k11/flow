@@ -2,8 +2,8 @@ from flask import Flask, render_template, jsonify, request, make_response
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
-import re, pathlib, sqlite3, uuid, os,\
-    functions.other as other, functions.conection as con
+import pathlib, sqlite3, os, time,\
+    functions.other as other, functions.conection as conection
 
 load_dotenv(f"{pathlib.Path.home()}/.flow/.env")
 
@@ -20,14 +20,37 @@ def root():
 @app.route("/api/messages/<string:id>", methods = ["GET", "POST"])
 @cross_origin()
 def messages(id):
+    my_id = os.environ["USER_ID"]
+    other_id = id
+    conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+
     if request.method == "GET":
-        my_id = os.environ["USER_ID"]
-        other_id = id
-        conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
         with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
-            select = con.execute("SELECT sender_id, receiver_id, content, time FROM messages WHERE conversation_id = ?", (conv_id,))
+            select = con.execute("SELECT sender_id, receiver_id, content, time FROM messages WHERE conversation_id = ? ORDER BY time DESC", (conv_id,))
             result = select.fetchall()
         return jsonify(result)
+
+    elif request.method == "POST":
+        content = request.json["content"]
+        MSGTime = request.json["time"]
+        MSGID = conection.generate_id(os.environ["SERVER_IP"], "message")
+        conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+        other.execute_db_command(
+            f"{pathlib.Path.home()}/.flow/.db",
+            "INSERT INTO messages VALUES (?,?,?,?,?,?)",
+            (MSGID, conv_id, my_id, other_id, content, MSGTime)   
+        )
+        conection.send_message(
+            ip = os.environ["SERVER_IP"],
+            port = 6002,
+            idMessage = MSGID,
+            idSender = my_id,
+            idReceiver = other_id,
+            content = content,
+            MTime = MSGTime,
+            key_file = f"{pathlib.Path.home()}/.flow/server.key"
+        )
+        return jsonify({"status": "0"})
 
 @app.route("/api/my-id", methods = ["GET"])
 @cross_origin()
@@ -49,7 +72,7 @@ def contacts():
     elif request.method == "POST":
         name = request.json["name"]
         ip = request.json["ip"]
-        id = con.check_ip(os.environ["SERVER_IP"], ip)
+        id = conection.check_ip(os.environ["SERVER_IP"], ip)
         if id != "0":
             select = other.execute_db_command(
                 f"{pathlib.Path.home()}/.flow/.db",
@@ -109,7 +132,7 @@ def contacts():
     elif request.method == "DELETE" or request.method == "OPTIONS":
         id = request.json["id"]
         print(os.environ["SERVER_IP"])
-        ip = con.get_ip(id, os.environ["SERVER_IP"])
+        ip = conection.get_ip(id, os.environ["SERVER_IP"])
         conv_id = other.client_get_conv_id(os.environ["USER_ID"], id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
         other.execute_db_command(
             f"{pathlib.Path.home()}/.flow/.db",

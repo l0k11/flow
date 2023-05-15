@@ -48,43 +48,49 @@ class MSGServer(threading.Thread):
                 result = select.fetchall()
                 
                 if len(result):
-                    try:
-                        con.send_message(
-                            ip = result[0][0],
-                            port = 6001,
-                            idMessage = packet["idMessage"],
-                            idSender = packet["idSender"],
-                            idReceiver = packet["idReceiver"],
-                            content = packet["content"],
-                            time = packet["time"],
-                            key_file = f"{self.root}client_keys/{packet['idReceiver']}.key"
-                        )
-                        print(f"{now} {addr[0]} to {result[0][0]}: Message sended")
-                    
-                    except:
+                    status = con.send_message(
+                        ip = result[0][0],
+                        port = 6001,
+                        idMessage = packet["idMessage"],
+                        idSender = packet["idSender"],
+                        idReceiver = packet["idReceiver"],
+                        content = packet["content"],
+                        MTime = packet["time"],
+                        key_file = f"{self.root}client_keys/{packet['idReceiver']}.key"
+                    )
+                    if status == 1:
                         other.execute_db_command(
-                            f"{self.root}",
+                            f"{self.root}.db",
                             "INSERT INTO waiting VALUES (?,?)",
                             (packet["idMessage"], packet["idReceiver"])
                         )
                         other.execute_db_command(
-                            f"{self.root}",
-                            "UPDATE users SET status='disconnected' WHERE id=?",
+                            f"{self.root}.db",
+                            "SELECT ip FROM users WHERE id = ?",
                             (packet["idReceiver"],)
                         )
                         print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
-                
+                    
+                    else: print(f"{now} {addr[0]} to {result[0][0]}: Message sended")
+
                 else:
+                    select = other.execute_db_command(
+                        f"{self.root}.db",
+                        "SELECT ip FROM users WHERE id = ?",
+                        (packet["idReceiver"],)
+                    )
+                    result = select.fetchall()
+
                     other.execute_db_command(
-                            f"{self.root}",
-                            "INSERT INTO waiting VALUES (?,?)",
-                            (packet["idMessage"], packet["idReceiver"])
-                        )
-                    other.execute_db_command(
-                        f"{self.root}",
-                        "UPDATE users SET status='disconnected' WHERE id=?",
-                        (packet["idReceiver"])
+                        f"{self.root}.db",
+                        "INSERT INTO waiting VALUES (?,?)",
+                        (packet["idMessage"], packet["idReceiver"])
                     )
                     print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
 
+            RPacket = {
+                "status": "ok"
+            }
+            RPacket = json.dumps(RPacket)
+            server.sendall(bytes(RPacket, "utf-8"))
             server.close()
