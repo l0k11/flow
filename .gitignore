@@ -4,3 +4,7 @@ __pycache__/
 **/node_modules
 node_modules/
 /node_modules
+prueba2.py
+tests/
+docs/
+api/

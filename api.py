@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, make_response
+from flask import Flask, render_template, jsonify, request, make_response, send_from_directory
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
@@ -7,15 +7,18 @@ import pathlib, sqlite3, os, time,\
 
 load_dotenv(f"{pathlib.Path.home()}/.flow/.env")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='web/build')
 socket = SocketIO(app)
 CORS(app)
 
-@app.route("/")
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 @cross_origin()
-def root():
-    # <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    return render_template("hola.html")
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 @app.route("/api/messages/<string:id>", methods = ["GET", "POST"])
 @cross_origin()
@@ -157,16 +160,10 @@ def convs():
         result = select.fetchall()
         return jsonify(result)
 
-@socket.on('connect')
-def handle_connect():
-    print('Client connected')
+def handle_message(msg):
+    print("mandando datos")
+    socket.emit("message", {"msg": msg})
+    return "Todo ok"
 
-@socket.on('disconnect')
-def handle_disconnect():
-    print('Client disconnected')
-
-@socket.on("my event")
-def handle_event(data):
-    print(f'Client here: {data}')
-
-socket.run(app)
+if __name__ == "__main__":
+    socket.run(app)
