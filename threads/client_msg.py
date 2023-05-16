@@ -1,4 +1,4 @@
-import socket, threading, json, datetime,\
+import socket, threading, json, datetime, websocket,\
     functions.other as other,\
     functions.encryption as encryption,\
     functions.conection as con
@@ -20,17 +20,23 @@ class MSGClient(threading.Thread):
             raw = raw.split(b"\n\n\n")
             packet = encryption.decrypt_message(raw[0], f"{self.root}private.key", raw[1])
             packet = json.loads(packet)
-            now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            
 
             other.execute_db_command(
                 f"{self.root}.db",
                 "INSERT INTO messages VALUES (?,?,?,?,?,?)",
                 (packet["idMessage"], packet["conv_id"], packet["idSender"], packet["idReceiver"], packet["content"], packet["time"])
             )
-            # TODO: EVENTO DE SOCKETIO
+
+            ws = websocket.WebSocket()
+            ws.connect("ws://localhost:6004")
+            ws.send([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]])
+            ws.close()
+
             other.execute_db_command(
                 f"{self.root}.db",
-                "UPDATE contacts SET lastMsg = ?, lastMsgTime = ? WHERE id = ?",
+                "UPDATE conversations SET lastMsg = ?, lastMsgTime = ? WHERE id = ?",
                 (packet["content"], packet["time"], packet["idReceiver"])
             )
 

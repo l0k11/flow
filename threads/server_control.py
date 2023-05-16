@@ -151,6 +151,10 @@ class ControlServer(threading.Thread):
                 if result: RPacket = {"ip": result[0][0]}
                 else: RPacket = {"ip": "0"}
 
+            elif packet["type"] == "getConvID":
+                id = other.get_conv_id(packet["idSender"], packet["idReceiver"], f"{self.root}.db")
+                RPacket = {"id": id}
+
             RPacket = json.dumps(RPacket)
             conexion.sendall(bytes(RPacket, "utf-8"))
             conexion.close()

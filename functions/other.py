@@ -60,10 +60,11 @@ def client_get_conv_id(idSender, idReceiver, db, ip):
                 result = select.fetchall()
                 if len(result): return result[0][0]
                 else:
-                    id = conection.generate_id(ip, "conversation")
+                    id = conection.generateConvID(ip)
                     con.execute("INSERT INTO conversations VALUES (?,?,?,?,?)", (id, users, None, None, None))
                     return id
                     
         except Exception as e:
             con.close()
             raise e
+        

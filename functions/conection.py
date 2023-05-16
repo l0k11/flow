@@ -133,3 +133,15 @@ def get_ip(id, ip):
     print(type(response))
     if response["ip"] != "0": return response["ip"]
     else: return "Es imposible que llegue aquí"
+
+def generateConvID(ip):
+    packet = {
+        "type": "getConvID"
+    }
+    
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+        client.connect((ip, 6003))
+        client.sendall(bytes(json.dumps(packet), "utf-8"))
+        response = json.loads(client.recv(4096).decode())
+    
+    return response["id"]

@@ -160,10 +160,5 @@ def convs():
         result = select.fetchall()
         return jsonify(result)
 
-def handle_message(msg):
-    print("mandando datos")
-    socket.emit("message", {"msg": msg})
-    return "Todo ok"
-
 if __name__ == "__main__":
     socket.run(app)
