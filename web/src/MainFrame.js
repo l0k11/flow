@@ -1,7 +1,6 @@
 import React from 'react';
 import Prompt from './Prompt';
 import DateGroup from './MessageDateGroup';
-import io from 'socket.io-client';
 
 class MainFrame extends React.Component{
     constructor(props){
@@ -39,13 +38,18 @@ class MainFrame extends React.Component{
         this.setState({ MSGList: newList });
     }
     componentDidMount() {
-        this.socket = io(this.props.APIURL);
-        this.socket.on('message', (data) => {
-            console.log(data);
-        });
+        this.websocket = new WebSocket('ws://localhost:8765');
+        this.websocket.onmessage = this.handleMessage;
     }
+    handleMessage(event) {
+        let message = event.data;
+        let newList = this.state.MSGList.slice()
+        newList.unshift(message)
+        this.setState({ MSGList: newList });
+    };
+
     componentWillUnmount() {
-        this.socket.close();
+        this.websocket.close();
     }
     
     render(){
