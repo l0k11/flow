@@ -34,11 +34,10 @@ class MSGServer(threading.Thread):
                 server.sendall(json.dumps(RPacket).encode())
 
             else:
-                conv_id = other.get_conv_id(packet["idSender"], packet["idReceiver"], f"{self.root}.db")
                 other.execute_db_command(
                     f"{self.root}.db",
                     "INSERT INTO messages VALUES (?,?,?,?,?,?)",
-                    (packet["idMessage"], conv_id, packet["idSender"], packet["idReceiver"], packet["content"], packet["time"])
+                    (packet["idMessage"], packet["idConv"], packet["idSender"], packet["idReceiver"], packet["content"], packet["time"])
                 )
                 select = other.execute_db_command(
                     f"{self.root}.db",
@@ -54,6 +53,7 @@ class MSGServer(threading.Thread):
                         idMessage = packet["idMessage"],
                         idSender = packet["idSender"],
                         idReceiver = packet["idReceiver"],
+                        idConv = packet["idConv"],
                         content = packet["content"],
                         MTime = packet["time"],
                         key_file = f"{self.root}client_keys/{packet['idReceiver']}.key"

@@ -2,13 +2,12 @@ from flask import Flask, render_template, jsonify, request, make_response, send_
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
-import pathlib, sqlite3, os, time,\
+import pathlib, sqlite3, os,\
     functions.other as other, functions.conection as conection
 
 load_dotenv(f"{pathlib.Path.home()}/.flow/.env")
 
 app = Flask(__name__, static_folder='web/build')
-socket = SocketIO(app)
 CORS(app)
 
 @app.route('/', defaults={'path': ''})
@@ -49,6 +48,7 @@ def messages(id):
             idMessage = MSGID,
             idSender = my_id,
             idReceiver = other_id,
+            idConv = conv_id,
             content = content,
             MTime = MSGTime,
             key_file = f"{pathlib.Path.home()}/.flow/server.key"
@@ -161,4 +161,4 @@ def convs():
         return jsonify(result)
 
 if __name__ == "__main__":
-    socket.run(app)
+    app.run()

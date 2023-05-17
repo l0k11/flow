@@ -96,11 +96,12 @@ def client_keys_exchange(ip, root):
 
     return response
 
-def send_message(*, ip, port, idMessage = None, idSender, idReceiver, content, MTime = None, key_file):
+def send_message(*, ip, port, idMessage = None, idSender, idReceiver, idConv, content, MTime = None, key_file):
     packet = {
         "idMessage": generate_id(ip, "message") if idMessage == None else idMessage,
         "idSender": idSender,
         "idReceiver": idReceiver,
+        "idConv": idConv,
         "content": content,
         "time": int(round(time.time() * 1000)) if MTime == None else MTime
     }
