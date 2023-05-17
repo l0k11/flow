@@ -135,9 +135,11 @@ def get_ip(id, ip):
     if response["ip"] != "0": return response["ip"]
     else: return "Es imposible que llegue aquí"
 
-def generateConvID(ip):
+def generateConvID(ip, idSender, idReceiver):
     packet = {
-        "type": "getConvID"
+        "type": "getConvID",
+        "idSender": idSender,
+        "idReceiver": idReceiver,
     }
     
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:

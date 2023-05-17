@@ -152,6 +152,7 @@ class ControlServer(threading.Thread):
                 else: RPacket = {"ip": "0"}
 
             elif packet["type"] == "getConvID":
+                print(packet)
                 id = other.get_conv_id(packet["idSender"], packet["idReceiver"], f"{self.root}.db")
                 RPacket = {"id": id}
 

@@ -1,6 +1,9 @@
 import art, uuid
 from functions.setup import client_setup
 import functions.conection as con
+import threads.client_control as client_control
+import threads.client_msg as client_msg
+import threads.client_websocket as client_websocket
 
 settings = client_setup()
 
@@ -9,11 +12,7 @@ print(art.text2art("flow", font='block'))
 
 con.client_control_con(settings["server"], settings["root"])
 
-# con.send_message(
-#     ip = settings["server"],
-#     port = 6002,
-#     idSender = settings["id"],
-#     idReceiver = "u92d448d1-48ff-4053-be86-c726f570dbf0",
-#     content = "hola",
-#     server_key_file = f"{settings['root']}server.key"
-# )
+client_control.ControlCon(settings["server"], settings["root"]).start()
+client_msg.MSGClient(settings["root"]).start()
+client_websocket.WebSocket().start()
+

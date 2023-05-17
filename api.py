@@ -54,6 +54,13 @@ def messages(id):
             key_file = f"{pathlib.Path.home()}/.flow/server.key"
         )
         return jsonify({"status": "0"})
+    
+    elif request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
 
 @app.route("/api/my-id", methods = ["GET"])
 @cross_origin()
@@ -128,7 +135,7 @@ def contacts():
     elif request.method == "OPTIONS":
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "DELETE")
+        response.headers.add("Access-Control-Allow-Methods", "*")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         return response
 
@@ -159,6 +166,13 @@ def convs():
         )
         result = select.fetchall()
         return jsonify(result)
+    
+    elif request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        return response
 
 if __name__ == "__main__":
     app.run()

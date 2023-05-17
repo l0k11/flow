@@ -137,7 +137,8 @@ def test_messages(ip: str, root: str):
         port = 6002,
         idSender = "client",
         idReceiver = "server",
-        content = "Nada",
+        idConv = "do i need this? NO",
+        content = "just_saying_hi",
         key_file = f"{root}server.key"
     )
     return ip

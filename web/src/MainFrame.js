@@ -83,7 +83,7 @@ class MainFrame extends React.Component{
                     <div id='chatContainer'>
                         <div>
                             <div id='chat'>
-                                {this.dateGroups.map(date => <DateGroup date={date} messages={this.msgPerDate[date]} />)}
+                                {this.dateGroups.map(date => <DateGroup date={date} messages={this.msgPerDate[date]} my_id={this.state.senderID} />)}
                             </div>
                             <Prompt receiverID={this.state.receiverID} senderID={this.state.senderID} update_msgList={this.update_msgList} APIURL={this.props.APIURL}/>
                         </div>
