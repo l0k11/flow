@@ -10,9 +10,7 @@ settings = client_setup()
 print(art.text2art("Welcome    to"))
 print(art.text2art("flow", font='block'))
 
-con.client_control_con(settings["server"], settings["root"])
-
-client_control.ControlCon(settings["server"], settings["root"]).start()
 client_msg.MSGClient(settings["root"]).start()
+client_control.ControlCon(settings["server"], settings["root"]).start()
 client_websocket.WebSocket().start()
 

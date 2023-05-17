@@ -135,6 +135,7 @@ def test_messages(ip: str, root: str):
     con.send_message(
         ip = ip,
         port = 6002,
+        idMessage = "????",
         idSender = "client",
         idReceiver = "server",
         idConv = "do i need this? NO",

@@ -26,7 +26,7 @@ class MSGClient(threading.Thread):
             other.execute_db_command(
                 f"{self.root}.db",
                 "INSERT INTO messages VALUES (?,?,?,?,?,?)",
-                (packet["idMessage"], packet["conv_id"], packet["idSender"], packet["idReceiver"], packet["content"], packet["time"])
+                (packet["idMessage"], packet["idConv"], packet["idSender"], packet["idReceiver"], packet["content"], packet["time"])
             )
 
             ws = websocket.WebSocket()
@@ -37,7 +37,7 @@ class MSGClient(threading.Thread):
             other.execute_db_command(
                 f"{self.root}.db",
                 "UPDATE conversations SET lastMsg = ?, lastMsgTime = ? WHERE id = ?",
-                (packet["content"], packet["time"], packet["idReceiver"])
+                (packet["content"], packet["time"], packet["idConv"])
             )
 
             server.close()

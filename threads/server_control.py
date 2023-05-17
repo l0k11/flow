@@ -87,7 +87,7 @@ class ControlServer(threading.Thread):
                         if result:
                             messages = []
                             for message in result:
-                                MSelect = con.execute("SELECT * FROM messages WHERE idMessage = ?", (message[0],))
+                                MSelect = con.execute("SELECT * FROM messages WHERE id = ?", (message[0],))
                                 MResult = MSelect.fetchall()
                                 messages.append({
                                     "idMessage": MResult[0][0],
@@ -97,8 +97,11 @@ class ControlServer(threading.Thread):
                                     "time": MResult[0][5]
                                 })
                             
-                            packet = en.encrypt_message("\n\n\n".join(messages).encode(), f'{self.root}client_keys/{packetID}.key')
+                            packet = en.encrypt_message(json.dumps(messages).encode(), f'{self.root}client_keys/{packetID}.key')
                             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+                                print(packet)
+                                print(type(packet))
+                                print(type(a) for a in packet)
                                 client.connect((addr[0], 6001))
                                 client.sendall("\n\n\n".join(packet).encode())
                         
