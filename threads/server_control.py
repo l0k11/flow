@@ -1,5 +1,5 @@
 import socket, threading, json, sqlite3, time, functions.other as other, datetime,\
-    functions.encryption as en
+    functions.encryption as en, functions.conection as conn
 
 # Este servidor se encarga de procesar todos los paquetes que no son mensajes, ni tienen
 # relación con ellos y, por lo tanto, pueden ir sin encriptación. Estas conexiones son:
@@ -85,25 +85,20 @@ class ControlServer(threading.Thread):
                         select = con.execute("SELECT idMessage FROM waiting WHERE idReceiver = ?", (packetID,))
                         result = select.fetchall()
                         if result:
-                            messages = []
                             for message in result:
                                 MSelect = con.execute("SELECT * FROM messages WHERE id = ?", (message[0],))
                                 MResult = MSelect.fetchall()
-                                messages.append({
-                                    "idMessage": MResult[0][0],
-                                    "idSender": MResult[0][2],
-                                    "idReceiver": MResult[0][3],
-                                    "content": MResult[0][4],
-                                    "time": MResult[0][5]
-                                })
-                            
-                            packet = en.encrypt_message(json.dumps(messages).encode(), f'{self.root}client_keys/{packetID}.key')
-                            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-                                print(packet)
-                                print(type(packet))
-                                print(type(a) for a in packet)
-                                client.connect((addr[0], 6001))
-                                client.sendall("\n\n\n".join(packet).encode())
+                                conn.send_message(
+                                    ip = addr[0],
+                                    port = 6001,
+                                    idMessage = MResult[0][0],
+                                    idConv = MResult[0][1],
+                                    idSender = MResult[0][2],
+                                    idReceiver = MResult[0][3],
+                                    content = MResult[0][4],
+                                    MTime = MResult[0][5],
+                                    key_file = f'{self.root}client_keys/{packetID}.key'
+                                )
                         
                             con.execute("DELETE FROM waiting WHERE idReceiver = ?", (packetID,))
                         print(f"{now} {addr[0]}: Control conection correct")

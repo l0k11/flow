@@ -22,22 +22,23 @@ class MSGClient(threading.Thread):
             packet = json.loads(packet)
             
             
-
+            print(packet)
             other.execute_db_command(
                 f"{self.root}.db",
                 "INSERT INTO messages VALUES (?,?,?,?,?,?)",
                 (packet["idMessage"], packet["idConv"], packet["idSender"], packet["idReceiver"], packet["content"], packet["time"])
             )
 
-            ws = websocket.WebSocket()
-            ws.connect("ws://localhost:6004")
-            ws.send([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]])
-            ws.close()
-
             other.execute_db_command(
                 f"{self.root}.db",
                 "UPDATE conversations SET lastMsg = ?, lastMsgTime = ? WHERE id = ?",
                 (packet["content"], packet["time"], packet["idConv"])
             )
+
+            # TODO: PROBAR CONEXION FUERA DE LA APP
+            ws = websocket.WebSocket()
+            ws.connect("ws://localhost:6004")
+            ws.send([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]])
+            ws.close()
 
             server.close()

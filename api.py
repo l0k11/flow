@@ -25,6 +25,7 @@ def messages(id):
     my_id = os.environ["USER_ID"]
     other_id = id
     conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
+    print(request.method)
 
     if request.method == "GET":
         with sqlite3.connect(f"{pathlib.Path.home()}/.flow/.db") as con:
@@ -56,6 +57,7 @@ def messages(id):
         return jsonify({"status": "0"})
     
     elif request.method == "OPTIONS":
+        print("options")
         response = make_response()
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Methods", "*")
