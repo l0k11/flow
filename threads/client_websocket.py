@@ -20,7 +20,6 @@ class WebSocket:
             self.clientes.remove(websocket)
 
     def run_websocket_server(self):
-        print("Iniciando web socket")
         asyncio.set_event_loop(asyncio.new_event_loop())
         loop = asyncio.get_event_loop()
         start_server = websockets.serve(self.websocket_handler, self.ip, 6004)

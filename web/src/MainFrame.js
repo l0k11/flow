@@ -38,11 +38,12 @@ class MainFrame extends React.Component{
         this.setState({ MSGList: newList });
     }
     componentDidMount() {
-        this.websocket = new WebSocket('ws://localhost:8765');
+        this.websocket = new WebSocket(`ws://${this.props.ip}:6004`);
         this.websocket.onmessage = this.handleMessage;
     }
     handleMessage(event) {
-        let message = event.data;
+        let message = event.data.split("/n/n");
+        console.log(message)
         let newList = this.state.MSGList.slice()
         newList.unshift(message)
         this.setState({ MSGList: newList });

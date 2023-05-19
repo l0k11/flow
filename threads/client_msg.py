@@ -35,10 +35,9 @@ class MSGClient(threading.Thread):
                 (packet["content"], packet["time"], packet["idConv"])
             )
 
-            # TODO: PROBAR CONEXION FUERA DE LA APP
             ws = websocket.WebSocket()
-            ws.connect("ws://localhost:6004")
-            ws.send([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]])
+            ws.connect(f"ws://{self.ip}:6004")
+            ws.send("/n/n".join([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]]))
             ws.close()
 
             server.close()

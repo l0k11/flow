@@ -45,6 +45,7 @@ class MSGServer(threading.Thread):
                     (packet["idReceiver"],)
                 )
                 result = select.fetchall()
+                print(result)
                 
                 if len(result):
                     status = con.send_message(
@@ -58,6 +59,7 @@ class MSGServer(threading.Thread):
                         MTime = packet["time"],
                         key_file = f"{self.root}client_keys/{packet['idReceiver']}.key"
                     )
+                    print(status)
                     if status == 1:
                         other.execute_db_command(
                             f"{self.root}.db",

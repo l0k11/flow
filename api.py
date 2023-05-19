@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, make_response, send_
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
-import pathlib, sqlite3, os,\
+import pathlib, sqlite3, os, time,\
     functions.other as other, functions.conection as conection
 
 load_dotenv(f"{pathlib.Path.home()}/.flow/.env")
@@ -35,7 +35,7 @@ def messages(id):
 
     elif request.method == "POST":
         content = request.json["content"]
-        MSGTime = request.json["time"]
+        MSGTime = int(round(time.time() * 1000))
         MSGID = conection.generate_id(os.environ["SERVER_IP"], "message")
         conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
         other.execute_db_command(
@@ -68,6 +68,11 @@ def messages(id):
 @cross_origin()
 def my_id():
     return jsonify({"id": os.environ["USER_ID"]})
+
+@app.route("/api/my-ip", methods = ["GET"])
+@cross_origin()
+def my_ip():
+    return jsonify({"ip": other.get_private_ip()})
 
 @app.route("/api/contacts", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 @cross_origin()
