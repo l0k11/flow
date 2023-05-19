@@ -35,6 +35,8 @@ class MSGClient(threading.Thread):
                 (packet["content"], packet["time"], packet["idConv"])
             )
 
+
+
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")
             ws.send("/n/n".join([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]]))

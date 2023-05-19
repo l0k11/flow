@@ -103,7 +103,7 @@ def send_message(*, ip, port, idMessage = None, idSender, idReceiver, idConv, co
         "idReceiver": idReceiver,
         "idConv": idConv,
         "content": content,
-        "time": int(round(time.time() * 1000)) if MTime == None else MTime
+        "time": str(int(round(time.time() * 1000))) if MTime == None else MTime
     }
 
     packet = json.dumps(packet).encode()
@@ -116,8 +116,9 @@ def send_message(*, ip, port, idMessage = None, idSender, idReceiver, idConv, co
 
             if not response["status"]: return 1
             return 0
-        except:
-            return 1
+        except Exception as e:
+            # return 1
+            raise e
 
 def get_ip(id, ip):
     packet = {
