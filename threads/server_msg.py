@@ -31,7 +31,6 @@ class MSGServer(threading.Thread):
                         "type": "con_test",
                         "status": "ok"
                     }
-                server.sendall(json.dumps(RPacket).encode())
 
             else:
                 other.execute_db_command(
@@ -44,9 +43,7 @@ class MSGServer(threading.Thread):
                     "SELECT ip FROM users WHERE id = ? AND status = 'online'",
                     (packet["idReceiver"],)
                 )
-                result = select.fetchall()
-                print(result)
-                
+                result = select.fetchall()                
                 if len(result):
                     status = con.send_message(
                         ip = result[0][0],
@@ -59,7 +56,6 @@ class MSGServer(threading.Thread):
                         MTime = packet["time"],
                         key_file = f"{self.root}client_keys/{packet['idReceiver']}.key"
                     )
-                    print(status)
                     if status == 1:
                         other.execute_db_command(
                             f"{self.root}.db",
@@ -90,9 +86,9 @@ class MSGServer(threading.Thread):
                     )
                     print(f"{now} {addr[0]} to {result[0][0]}: Client {result[0][0]} disconnected. Message in queue.")
 
-            RPacket = {
-                "status": "ok"
-            }
+                RPacket = {
+                    "status": "ok"
+                }
             RPacket = json.dumps(RPacket)
             server.sendall(bytes(RPacket, "utf-8"))
             server.close()

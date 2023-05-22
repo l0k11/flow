@@ -35,11 +35,15 @@ class MSGClient(threading.Thread):
                 (packet["content"], packet["time"], packet["idConv"])
             )
 
-
-
+            
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")
             ws.send("/n/n".join([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]]))
             ws.close()
 
+            RPacket = {
+                "status": "ok"
+            }
+            RPacket = json.dumps(RPacket)
+            server.sendall(bytes(RPacket, "utf-8"))
             server.close()

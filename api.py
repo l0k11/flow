@@ -35,7 +35,7 @@ def messages(id):
 
     elif request.method == "POST":
         content = request.json["content"]
-        MSGTime = str(int(round(time.time() * 1000)))
+        MSGTime = request.json["time"]
         MSGID = conection.generate_id(os.environ["SERVER_IP"], "message")
         conv_id = other.client_get_conv_id(my_id, other_id, f"{pathlib.Path.home()}/.flow/.db", os.environ["SERVER_IP"])
         other.execute_db_command(

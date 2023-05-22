@@ -39,7 +39,7 @@ class MainFrame extends React.Component{
     }
     componentDidMount() {
         this.websocket = new WebSocket(`ws://${this.props.ip}:6004`);
-        this.websocket.onmessage = this.handleMessage;
+        this.websocket.onmessage = this.handleMessage.bind(this);
     }
     handleMessage(event) {
         let message = event.data.split("/n/n");
@@ -61,7 +61,7 @@ class MainFrame extends React.Component{
             this.dateGroups = [];
             this.msgPerDate = {};
             this.state.MSGList.forEach(msg => {
-                let date = new Date(msg[3] * 1000).toLocaleDateString('en-US', {
+                let date = new Date(msg[3]).toLocaleDateString('en-US', {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
