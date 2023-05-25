@@ -1,4 +1,4 @@
-import socket, threading, json, datetime, websocket,\
+import socket, threading, json, websocket,\
     functions.other as other,\
     functions.encryption as encryption,\
     functions.conection as con
@@ -34,7 +34,6 @@ class MSGClient(threading.Thread):
                 "UPDATE conversations SET lastMsg = ?, lastMsgTime = ? WHERE id = ?",
                 (packet["content"], packet["time"], packet["idConv"])
             )
-
             
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")

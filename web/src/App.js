@@ -27,8 +27,7 @@ class App extends React.Component{
         .then(response => response.json())
         .then(data => {
             this.setState({
-                myID: data.id,
-                receiverID: this.state.receiverID
+                myID: data.id
             })
         })
         .catch(error => console.error(error));
@@ -49,14 +48,19 @@ class App extends React.Component{
     }
 
     render(){
-        if (!this.state.myID){
-            this.my_id();
-            this.my_ip();
+        if (!this.state.myID && !this.state.myIP){
+            setTimeout(() => {
+                this.my_id();
+                this.my_ip();
+                console.log(`Getting creds ${this.state.myID} ${this.state.myIP}`)
+            }, 500);
+            return (<main></main>)
         }
+        console.log(`Creds: ${this.state.myID} ${this.state.myIP}`)
         return (
             <main>
-                {this.state.myID && <SideFrame myID={this.state.myID} func_chid={this.change_id} APIURL={this.APIURL}/>}
-                {this.state.myID && <MainFrame receiverID={this.state.receiverID} receiverName={this.state.receiverName} senderID={this.state.myID} ip={this.state.myIP} APIURL={this.APIURL}/>}
+                {(this.state.myID && this.state.myIP) && <SideFrame myID={this.state.myID} func_chid={this.change_id} APIURL={this.APIURL}/>}
+                {(this.state.myID && this.state.myIP) && <MainFrame receiverID={this.state.receiverID} receiverName={this.state.receiverName} senderID={this.state.myID} ip={this.state.myIP} APIURL={this.APIURL}/>}
             </main>
         );
     };

@@ -117,8 +117,8 @@ def send_message(*, ip, port, idMessage = None, idSender, idReceiver, idConv, co
             if not response["status"]: return 1
             return 0
         except Exception as e:
-            # return 1
-            raise e
+            return 1
+            # raise e
 
 def get_ip(id, ip):
     packet = {
