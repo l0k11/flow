@@ -20,9 +20,22 @@ class MSGClient(threading.Thread):
             raw = raw.split(b"\n\n\n")
             packet = encryption.decrypt_message(raw[0], f"{self.root}private.key", raw[1])
             packet = json.loads(packet)
-            
-            
-            print(packet)
+
+            select = other.execute_db_command(
+                f"{self.root}.db",
+                "SELECT name FROM conversations WHERE id = ?",
+                (packet["idConv"],)
+            )
+            try:
+                convName = select.fetchall[0][0]
+            except:
+                convName = con.get_ip(packet["idSender"], addr[0])
+                other.execute_db_command(
+                    f"{self.root}.db",
+                    "INSERT INTO conversations VALUES (?,?,?,?,?)",
+                    (packet["idConv"], f'{packet["idSender"]},{packet["idReceiver"]}', convName, packet["content"], packet["time"])
+                )
+
             other.execute_db_command(
                 f"{self.root}.db",
                 "INSERT INTO messages VALUES (?,?,?,?,?,?)",
@@ -35,9 +48,10 @@ class MSGClient(threading.Thread):
                 (packet["content"], packet["time"], packet["idConv"])
             )
             
+
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")
-            ws.send("/n/n".join([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"]]))
+            ws.send("/n/n".join([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"], packet["idConv"], convName]))
             ws.close()
 
             RPacket = {

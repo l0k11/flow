@@ -17,8 +17,15 @@ class MainFrame extends React.Component{
             this.setState({ receiverID: nextProps.receiverID });
             this.getMessages(nextProps.receiverID);
             return true;
-        } if (nextState.MSGList !== this.state.MSGList) {
+        }
+        if (nextState.MSGList !== this.state.MSGList) {
             return true;
+        }
+        if (nextProps.newMSG !== this.props.newMSG && this.state.receiverID) { {/*TODO ME HE QUEDADO AQUI PENSAR ESTO */}
+
+            let newList = this.state.MSGList.slice()
+            newList.unshift(message)
+            this.setState({ MSGList: newList });
         }
         return false;
     }
@@ -36,21 +43,6 @@ class MainFrame extends React.Component{
         let newList = this.state.MSGList.slice()
         newList.unshift(msg)
         this.setState({ MSGList: newList });
-    }
-    componentDidMount() {
-        this.websocket = new WebSocket(`ws://${this.props.ip}:6004`);
-        this.websocket.onmessage = this.handleMessage.bind(this);
-    }
-    handleMessage(event) {
-        let message = event.data.split("/n/n");
-        console.log(message)
-        let newList = this.state.MSGList.slice()
-        newList.unshift(message)
-        this.setState({ MSGList: newList });
-    };
-
-    componentWillUnmount() {
-        this.websocket.close();
     }
     
     render(){

@@ -10,9 +10,11 @@ class App extends React.Component{
             myID: null,
             myIP: null,
             receiverID: null,
-            receiverName: null
+            receiverName: null,
+            newMSG: null,
         };
-        this.APIURL = "http://localhost:5000"
+        this.APIURL = `http://${window.location.hostname}:${window.location.port}`
+        this.websocket = null
     };
 
     change_id = (id, name) => {
@@ -47,20 +49,46 @@ class App extends React.Component{
         .catch(error => console.error(error));
     }
 
+    componentDidUpdate() {
+        if (this.state.myIP){
+            console.log("Connected to ws")
+            this.websocket = new WebSocket(`ws://${this.state.myIP}:6004`);
+            this.websocket.onmessage = (event) => {
+                let message = event.data.split("/n/n");
+                this.setState({ newMSG: message });
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        this.websocket.close();
+    }
+
     render(){
         if (!this.state.myID && !this.state.myIP){
-            setTimeout(() => {
-                this.my_id();
-                this.my_ip();
-                console.log(`Getting creds ${this.state.myID} ${this.state.myIP}`)
-            }, 500);
+            this.my_id();
+            this.my_ip();
             return (<main></main>)
         }
         console.log(`Creds: ${this.state.myID} ${this.state.myIP}`)
         return (
             <main>
-                {(this.state.myID && this.state.myIP) && <SideFrame myID={this.state.myID} func_chid={this.change_id} APIURL={this.APIURL}/>}
-                {(this.state.myID && this.state.myIP) && <MainFrame receiverID={this.state.receiverID} receiverName={this.state.receiverName} senderID={this.state.myID} ip={this.state.myIP} APIURL={this.APIURL}/>}
+                {(this.state.myID && this.state.myIP) && 
+                <SideFrame 
+                    myID={this.state.myID}
+                    func_chid={this.change_id}
+                    APIURL={this.APIURL}
+                />}
+                
+                {(this.state.myID && this.state.myIP) && 
+                <MainFrame 
+                    receiverID={this.state.receiverID} 
+                    receiverName={this.state.receiverName}
+                    senderID={this.state.myID}
+                    ip={this.state.myIP}
+                    APIURL={this.APIURL}
+                    newMSG={this.state.newMSG}
+                />}
             </main>
         );
     };
