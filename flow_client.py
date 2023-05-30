@@ -1,12 +1,12 @@
-import art, waitress, threading
 from functions.setup import client_setup
+settings = client_setup()
+
+import art, waitress, threading
 from functions.other import get_private_ip
 import threads.client_control as client_control
 import threads.client_msg as client_msg
 import threads.client_websocket as client_websocket
 import threads.client_api as api
-
-settings = client_setup()
 
 print(art.text2art("Welcome    to"))
 print(art.text2art("flow", font='block'))

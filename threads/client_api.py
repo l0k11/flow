@@ -1,5 +1,4 @@
-from flask import Flask, render_template, jsonify, request, make_response, send_from_directory
-from flask_socketio import SocketIO
+from flask import Flask, jsonify, request, make_response, send_from_directory
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import pathlib, sqlite3, os, time,\

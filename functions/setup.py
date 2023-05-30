@@ -174,9 +174,8 @@ def client_setup():
             user_id = test_control(server_ip, root, db_file)
             test_messages(server_ip, root)
             break
-        except Exception as e:
+        except:
             print(f"{server_ip} is not a valid server.")
-            raise e
 
     other.clear_console()
     with open(f"{root}.env", "w") as file:
