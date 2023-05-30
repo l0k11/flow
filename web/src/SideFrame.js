@@ -73,6 +73,47 @@ class SideFrame extends React.Component{
         this.getContacts();
         this.getConvs();
     }
+    shouldComponentUpdate(nextProps, nextState){ {/**TODO SEGUIR */}
+        if (nextProps.newMSG !== this.props.newMSG){
+            let supArray = [];
+            let check = 0;
+            this.state.convList.forEach((conv) => {
+                if (conv[0] == nextProps.newMSG[0]){
+                    console.log(`Element ${conv[0]} found, unshifting it`)
+                    supArray.unshift(conv);
+                } else {
+                    console.log(`Pushing element ${conv[0]}`)
+                    supArray.push(conv);
+                    check += 1;
+                }
+                console.log(`${check} ${array.length}`)
+                if (check == array.length){
+                    console.log(`Element ${ID} not found, creating it`)
+                    supArray.unshift([ID, "nombre"]);
+                }
+            })
+            array = supArray;
+        }
+        let supArray = [];
+        let check = 0;
+        const ID = 6;
+        array.forEach((conv) => {
+            if (conv[0] == ID){
+                console.log(`Element ${conv[0]} found, unshifting it`)
+                supArray.unshift(conv);
+            } else {
+                console.log(`Pushing element ${conv[0]}`)
+                supArray.push(conv);
+                check += 1;
+            }
+            console.log(`${check} ${array.length}`)
+            if (check == array.length){
+                console.log(`Element ${ID} not found, creating it`)
+                supArray.unshift([ID, "nombre"]);
+            }
+        })
+        array = supArray;
+    }
 
     addContact(){
         if (this.state.nameValue && this.ValidateIPaddress(this.state.ipValue)){
@@ -121,7 +162,7 @@ class SideFrame extends React.Component{
         const newChatSVG = <span id="new-chat-svg" className="clickable" title='New chat'><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 96 960 960"><path d="M450 656h60V526h130v-60H510V336h-60v130H320v60h130v130ZM80 976V236q0-23 18-41.5t42-18.5h680q23 0 41.5 18.5T880 236v520q0 23-18.5 41.5T820 816H240L80 976Z"/></svg></span>
         const searchSVG =<span id="search-svg"><svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 12 12" version="1.1"><g><path d="M 9.949219 10.488281 L 6.664062 7.199219 C 6.414062 7.417969 6.121094 7.585938 5.789062 7.707031 C 5.453125 7.828125 5.101562 7.886719 4.726562 7.886719 C 3.824219 7.886719 3.0625 7.574219 2.4375 6.949219 C 1.8125 6.324219 1.5 5.570312 1.5 4.6875 C 1.5 3.804688 1.8125 3.050781 2.4375 2.425781 C 3.0625 1.800781 3.820312 1.488281 4.710938 1.488281 C 5.597656 1.488281 6.347656 1.800781 6.96875 2.425781 C 7.589844 3.050781 7.898438 3.804688 7.898438 4.6875 C 7.898438 5.046875 7.839844 5.390625 7.726562 5.726562 C 7.609375 6.058594 7.433594 6.371094 7.199219 6.664062 L 10.5 9.9375 Z M 4.710938 7.136719 C 5.386719 7.136719 5.960938 6.898438 6.4375 6.417969 C 6.914062 5.941406 7.148438 5.363281 7.148438 4.6875 C 7.148438 4.011719 6.914062 3.433594 6.4375 2.957031 C 5.960938 2.476562 5.386719 2.238281 4.710938 2.238281 C 4.027344 2.238281 3.449219 2.476562 2.96875 2.957031 C 2.488281 3.433594 2.25 4.011719 2.25 4.6875 C 2.25 5.363281 2.488281 5.941406 2.96875 6.417969 C 3.449219 6.898438 4.027344 7.136719 4.710938 7.136719 Z M 4.710938 7.136719 "/></g></svg></span>
         const clearSVG = <span id="clear-svg" className="clickable"><svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 12 12" version="1.1"><g><path d="M 3.113281 9.414062 L 2.585938 8.886719 L 5.476562 6 L 2.585938 3.113281 L 3.113281 2.585938 L 6 5.476562 L 8.886719 2.585938 L 9.414062 3.113281 L 6.523438 6 L 9.414062 8.886719 L 8.886719 9.414062 L 6 6.523438 Z M 3.113281 9.414062 "/></g></svg></span>
-
+        console.log(this.state.convList)
         return (
             <div id="sideFrame">
                 <div>

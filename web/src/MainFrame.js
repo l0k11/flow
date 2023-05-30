@@ -21,10 +21,9 @@ class MainFrame extends React.Component{
         if (nextState.MSGList !== this.state.MSGList) {
             return true;
         }
-        if (nextProps.newMSG !== this.props.newMSG && this.state.receiverID) { {/*TODO ME HE QUEDADO AQUI PENSAR ESTO */}
-
+        if (nextProps.newMSG !== this.props.newMSG && this.state.receiverID === nextProps.newMSG[0]) {
             let newList = this.state.MSGList.slice()
-            newList.unshift(message)
+            newList.unshift(nextProps.newMSG)
             this.setState({ MSGList: newList });
         }
         return false;

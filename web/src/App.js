@@ -78,6 +78,7 @@ class App extends React.Component{
                     myID={this.state.myID}
                     func_chid={this.change_id}
                     APIURL={this.APIURL}
+                    newMSG={this.state.newMSG}
                 />}
                 
                 {(this.state.myID && this.state.myIP) && 
