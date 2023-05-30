@@ -23,11 +23,13 @@ class MSGClient(threading.Thread):
 
             select = other.execute_db_command(
                 f"{self.root}.db",
-                "SELECT name FROM conversations WHERE id = ?",
+                "SELECT name, users FROM conversations WHERE id = ?",
                 (packet["idConv"],)
             )
             try:
-                convName = select.fetchall[0][0]
+                result = select.fetchall()
+                convName = result[0][0]
+                convUsers = result[0][1]
             except:
                 convName = con.get_ip(packet["idSender"], addr[0])
                 other.execute_db_command(
@@ -51,7 +53,15 @@ class MSGClient(threading.Thread):
 
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")
-            ws.send("/n/n".join([packet["idSender"], packet["idReceiver"], packet["content"], packet["time"], packet["idConv"], convName]))
+            ws.send("/n/n".join([
+                packet["idSender"], # 0
+                packet["idReceiver"], # 1
+                packet["content"], # 2
+                packet["time"], # 3
+                packet["idConv"], # 4
+                convName, # 5
+                convUsers, # 6
+            ]))
             ws.close()
 
             RPacket = {
