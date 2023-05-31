@@ -88,7 +88,7 @@ class ControlServer(threading.Thread):
                             for message in result:
                                 MSelect = con.execute("SELECT * FROM messages WHERE id = ?", (message[0],))
                                 MResult = MSelect.fetchall()
-                                print("Sending message {MResult[0][0]} from waiting to {addr[0]}")
+                                print(f"Sending message {MResult[0][0]} from waiting to {addr[0]}")
                                 conn.send_message(
                                     ip = addr[0],
                                     port = 6001,

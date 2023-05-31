@@ -32,10 +32,11 @@ class MSGClient(threading.Thread):
                 convUsers = result[0][1]
             except:
                 convName = con.get_ip(packet["idSender"], addr[0])
+                convUsers = f'{packet["idSender"]},{packet["idReceiver"]}'
                 other.execute_db_command(
                     f"{self.root}.db",
                     "INSERT INTO conversations VALUES (?,?,?,?,?)",
-                    (packet["idConv"], f'{packet["idSender"]},{packet["idReceiver"]}', convName, packet["content"], packet["time"])
+                    (packet["idConv"], convUsers, convName, packet["content"], packet["time"])
                 )
 
             other.execute_db_command(
@@ -50,17 +51,16 @@ class MSGClient(threading.Thread):
                 (packet["content"], packet["time"], packet["idConv"])
             )
             
-
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")
             ws.send("/n/n".join([
-                packet["idSender"], # 0
-                packet["idReceiver"], # 1
-                packet["content"], # 2
-                packet["time"], # 3
-                packet["idConv"], # 4
-                convName, # 5
-                convUsers, # 6
+                str(packet["idSender"]), # 0
+                str(packet["idReceiver"]), # 1
+                str(packet["content"]), # 2
+                str(packet["time"]), # 3
+                str(packet["idConv"]), # 4
+                str(convName), # 5
+                str(convUsers), # 6
             ]))
             ws.close()
 

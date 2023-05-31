@@ -78,21 +78,23 @@ class SideFrame extends React.Component{
             let supArray = [];
             let check = 0;
             this.state.convList.forEach((conv) => {
-                let users = conv[6].split(",")
-                let senderID = users[0] === this.props.myID ? users[1] : users[0]
-                if (senderID === this.props.receiverID){
-                    supArray.unshift(conv);
-                } else {
-                    supArray.push(conv);
-                    check += 1;
-                }
-                if (check == this.state.convList.length){
-                    let convData = [conv[4], conv[6], conv[5], conv[2], conv[3]];
-                    supArray.unshift(convData);
-                }
+                console.log(conv)
+                // let users = conv[6].split(",")
+                // let senderID = users[0] === this.props.myID ? users[1] : users[0]
+                // if (senderID === this.props.receiverID){
+                //     supArray.unshift(conv);
+                // } else {
+                //     supArray.push(conv);
+                //     check += 1;
+                // }
+                // if (check == this.state.convList.length){
+                //     let convData = [conv[4], conv[6], conv[5], conv[2], conv[3]];
+                //     supArray.unshift(convData);
+                // }
             })
-            this.setState({convList: supArray,});
+            // this.setState({convList: supArray,});
         }
+        return true;
     }
 
     addContact(){
