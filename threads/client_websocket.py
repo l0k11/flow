@@ -11,12 +11,18 @@ class WebSocket:
 
     async def websocket_handler(self, websocket, path):
         self.clientes.append(websocket)
+        print("Nuevo cliente")
         try:
             while True:
                 mensaje = await websocket.recv()
+                print(self.clientes)
+                print("WS recibido y mandando")
                 for cliente in self.clientes:
+                    print(cliente)
                     await cliente.send(mensaje)
+                    print("WS mandado")
         except websockets.exceptions.ConnectionClosedOK:
+            print("*********************************************************************************************")
             self.clientes.remove(websocket)
 
     def run_websocket_server(self):

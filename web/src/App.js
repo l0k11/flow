@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import SideFrame from './SideFrame';
 import MainFrame from './MainFrame';
+import websocket from './WebSocket';
 
 class App extends React.Component{
     constructor(props){
@@ -14,7 +15,6 @@ class App extends React.Component{
             newMSG: null,
         };
         this.APIURL = `http://${window.location.hostname}:${window.location.port}`
-        this.websocket = null
     };
 
     change_id = (id, name) => {
@@ -50,14 +50,12 @@ class App extends React.Component{
     }
 
     componentDidUpdate() {
-        if (this.state.myIP){
-            console.log("Connected to ws")
-            this.websocket = new WebSocket(`ws://${this.state.myIP}:6004`);
-            this.websocket.onmessage = (event) => {
-                let message = event.data.split("/n/n");
-                this.setState({ newMSG: message });
-            }
+        console.log("Connected to ws")
+        websocket.onmessage = (event) => {
+            let message = event.data.split("/n/n");
+            this.setState({ newMSG: message });
         }
+
     }
 
     componentWillUnmount() {

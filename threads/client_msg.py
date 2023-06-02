@@ -51,6 +51,7 @@ class MSGClient(threading.Thread):
                 (packet["content"], packet["time"], packet["idConv"])
             )
             
+            print("MSG mandando")
             ws = websocket.WebSocket()
             ws.connect(f"ws://{self.ip}:6004")
             ws.send("/n/n".join([
@@ -63,6 +64,7 @@ class MSGClient(threading.Thread):
                 str(convUsers), # 6
             ]))
             ws.close()
+            print("MSG mandado")
 
             RPacket = {
                 "status": "ok"

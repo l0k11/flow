@@ -52,7 +52,7 @@ class MainFrame extends React.Component{
             this.dateGroups = [];
             this.msgPerDate = {};
             this.state.MSGList.forEach(msg => {
-                let date = new Date(msg[3]).toLocaleDateString('en-US', {
+                let date = new Date(parseInt(msg[3])).toLocaleDateString('en-US', {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
