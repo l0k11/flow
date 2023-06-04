@@ -2,7 +2,6 @@ import './App.css';
 import React from 'react';
 import SideFrame from './SideFrame';
 import MainFrame from './MainFrame';
-import websocket from './WebSocket';
 
 class App extends React.Component{
     constructor(props){
@@ -14,6 +13,7 @@ class App extends React.Component{
             receiverName: null,
             newMSG: null,
         };
+        this.websocket = null;
         this.APIURL = `http://${window.location.hostname}:${window.location.port}`
     };
 
@@ -21,41 +21,51 @@ class App extends React.Component{
         this.setState({ receiverID: id, receiverName: name });
     }
 
-    my_id = () => {
+    my_id() {
         let url = this.APIURL + "/api/my-id";
         fetch(url, {
             method: "GET"
         })
         .then(response => response.json())
-        .then(data => {
-            this.setState({
-                myID: data.id
-            })
-        })
+        .then(data => this.setState({myID: data.id}))
         .catch(error => console.error(error));
     }
 
-    my_ip = () => {
+    my_ip(){
+        let url = this.APIURL + "/api/my-ip";
+        fetch(url, {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(data => this.setState({myIP: data.ip}))
+        .catch(error => console.error(error));
+    }
+
+    componentDidMount(){
         let url = this.APIURL + "/api/my-ip";
         fetch(url, {
             method: "GET"
         })
         .then(response => response.json())
         .then(data => {
-            this.setState({
-                myIP: data.ip
-            })
+            this.setState({myIP: data.ip});
+            this.websocket = new WebSocket(`ws://${data.ip}:6004`);
+            console.log("Connecting...")
         })
         .catch(error => console.error(error));
+        console.log(this.state.myIP)
+
     }
 
     componentDidUpdate() {
-        console.log("Connected to ws")
-        websocket.onmessage = (event) => {
-            let message = event.data.split("/n/n");
-            this.setState({ newMSG: message });
+        if (this.websocket){
+            console.log("Connected to ws");
+            console.log(this.websocket);
+            this.websocket.onmessage = (event) => {
+                let message = event.data.split("/n/n");
+                this.setState({ newMSG: message });
+            }
         }
-
     }
 
     componentWillUnmount() {
