@@ -162,7 +162,7 @@ def contacts():
         )
         return jsonify({"status": "0"})
 
-@app.route("/api/convs", methods=["GET", "POST", "DELETE"])
+@app.route("/api/convs", methods=["GET"])
 @cross_origin()
 def convs():
     if request.method == "GET":

@@ -81,7 +81,6 @@ class ControlServer(threading.Thread):
                             "status": "ok"
                         }
 
-                        # TODO: TESTEAR ESTO
                         select = con.execute("SELECT idMessage FROM waiting WHERE idReceiver = ?", (packetID,))
                         result = select.fetchall()
                         if result:

@@ -3,7 +3,7 @@ import React from "react";
 class IncomeMessage extends React.Component{
     constructor(props){
         super(props);
-        this.hour = new Date(parseInt(this.props.time) * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        this.hour = new Date(parseInt(this.props.time)).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }
     render(){
         return (

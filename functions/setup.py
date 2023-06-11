@@ -208,6 +208,6 @@ def server_setup():
             finally: raise e
     
     other.clear_console()
-    print("Type your password to access flow.")
+    print("Type your password to initialize the server.")
     check_password(passwd_file)
     other.clear_console()
